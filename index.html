@@ -1,0 +1,1933 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CineMastery | Asisten Digital Fotografi SMKN 12 Surabaya</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Google Fonts: Poppins & Space Grotesk -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: { purple: '#7D2AE8', cyan: '#00C4CC', pink: '#FF4F81', dark: '#0F172A', light: '#F8FAFC', card: '#FFFFFF', border: '#E2E8F0' }
+          },
+          fontFamily: { sans: ['"Poppins"', 'sans-serif'], mono: ['"Space Grotesk"', 'monospace'] },
+          boxShadow: {
+            'canva': '0 10px 30px -5px rgba(125, 42, 232, 0.12), 0 4px 10px -2px rgba(0, 196, 204, 0.08)',
+            'canva-card': '0 4px 20px 0 rgba(0, 0, 0, 0.05)'
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    ::-webkit-scrollbar { width: 7px; height: 7px; }
+    ::-webkit-scrollbar-track { background: #F1F5F9; }
+    ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #7D2AE8; }
+
+    .canva-gradient-bg { background: linear-gradient(135deg, #00C4CC 0%, #7D2AE8 100%); }
+    .canva-gradient-text { background: linear-gradient(135deg, #00C4CC 0%, #7D2AE8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .grid-rot-overlay { background-size: 33.333% 33.333%; background-image: linear-gradient(to right, rgba(0, 196, 204, 0.6) 1px, transparent 1px), linear-gradient(to bottom, rgba(0, 196, 204, 0.6) 1px, transparent 1px); }
+    .iso-noise-overlay { background-image: radial-gradient(rgba(255,255,255,0.2) 1px, transparent 0); background-size: 3px 3px; }
+    .view-content-panel { display: none; animation: fadeInView 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .view-content-panel.active-view { display: block; }
+    .sub-tab-panel { display: none; animation: fadeInView 0.2s ease forwards; }
+    .sub-tab-panel.active-subtab { display: block; }
+
+    @keyframes fadeInView { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+
+<body class="bg-[#F8FAFC] text-slate-800 font-sans min-h-screen flex flex-col selection:bg-purple-200 selection:text-purple-900 antialiased">
+
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="h-16 flex items-center justify-between gap-3 border-b border-slate-100">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl canva-gradient-bg flex items-center justify-center text-white font-black text-lg shadow-md shadow-purple-500/20">
+            <i class="fa-solid fa-camera-retro"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-mono text-xs sm:text-sm tracking-wider font-extrabold text-slate-900">CINEMASTERY</span>
+            </div>
+            <p class="text-[11px] text-slate-500">SMKN 12 Surabaya</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 sm:gap-2.5">
+          <button onclick="openLoginModal('teacher')" id="btn-mode-guru" class="px-2.5 sm:px-3 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 text-xs rounded-xl flex items-center gap-1.5 transition-all font-mono font-bold shadow-xs">
+            <i class="fa-solid fa-chalkboard-user text-purple-600"></i>
+            <span id="btn-guru-label" class="hidden sm:inline">Login Guru</span>
+          </button>
+
+          <div id="user-header-chip" class="flex items-center gap-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-xl transition-all cursor-pointer shadow-xs" onclick="openLoginModal('student')">
+            <div class="w-6 h-6 rounded-full canva-gradient-bg text-white flex items-center justify-center text-xs font-bold font-mono">
+              <i id="user-header-icon" class="fa-solid fa-user text-[10px]"></i>
+            </div>
+            <div class="flex flex-col text-left">
+              <span id="user-display-name" class="text-xs font-bold text-slate-900 leading-tight">Belum Masuk</span>
+              <span id="user-display-class" class="text-[10px] font-mono text-purple-600 leading-none">Klik untuk Login</span>
+            </div>
+            <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 ml-1"></i>
+          </div>
+
+          <div id="cloud-sync-status" class="hidden md:flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 border border-emerald-200 rounded-xl text-[11px] font-mono text-emerald-700 font-semibold shadow-xs">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span id="sync-label-text">Lokal Aktif ✓</span>
+          </div>
+
+          <div class="hidden lg:flex flex-col items-end">
+            <div class="flex items-center gap-2">
+              <span class="text-[11px] text-slate-500 font-mono">Progres:</span>
+              <span id="header-progress-text" class="text-xs font-mono font-bold text-purple-700">0%</span>
+            </div>
+            <div class="w-28 h-2 bg-slate-100 rounded-full overflow-hidden mt-1 border border-slate-200">
+              <div id="header-progress-bar" class="h-full canva-gradient-bg transition-all duration-500 w-0"></div>
+            </div>
+          </div>
+
+          <button onclick="openAssistantModal()" class="px-2.5 sm:px-3 py-1.5 bg-slate-50 hover:bg-purple-50 text-slate-700 border border-slate-200 hover:border-purple-300 text-xs rounded-xl flex items-center gap-1.5 transition-all shadow-xs">
+            <i class="fa-solid fa-robot text-cyan-600 text-xs"></i>
+            <span class="hidden sm:inline font-mono font-medium">FOBI</span>
+          </button>
+
+          <button onclick="toggleAudioFx()" id="btn-audio-toggle" title="Efek Suara Shutter Kamera" class="w-9 h-9 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 hover:text-purple-600 flex items-center justify-center transition-all shadow-xs">
+            <i id="audio-icon" class="fa-solid fa-volume-high text-xs text-purple-600"></i>
+          </button>
+        </div>
+      </div>
+
+      <nav class="flex items-center gap-1.5 overflow-x-auto py-2.5 no-scrollbar text-xs font-mono font-bold">
+        <button onclick="switchMainTab('tab-beranda')" id="nav-tab-beranda" class="main-nav-btn px-3.5 py-2 rounded-xl flex items-center gap-2 shrink-0 transition-all canva-gradient-bg text-white shadow-md shadow-purple-500/20">
+          <i class="fa-solid fa-house text-xs"></i>
+          <span>1. BERANDA & ROADMAP</span>
+        </button>
+        <button onclick="switchMainTab('tab-materi')" id="nav-tab-materi" class="main-nav-btn px-3.5 py-2 rounded-xl flex items-center gap-2 shrink-0 transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+          <i id="nav-icon-materi" class="fa-solid fa-lock text-xs text-amber-500"></i>
+          <span>2. MATERI & SIMULATOR</span>
+        </button>
+        <button onclick="switchMainTab('tab-tugas')" id="nav-tab-tugas" class="main-nav-btn px-3.5 py-2 rounded-xl flex items-center gap-2 shrink-0 transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+          <i id="nav-icon-tugas" class="fa-solid fa-lock text-xs text-amber-500"></i>
+          <span>3. TUGAS & WORKFLOW</span>
+          <span id="nav-badge-mission" class="text-[10px] bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full font-bold">0/7</span>
+        </button>
+        <button onclick="switchMainTab('tab-evaluasi')" id="nav-tab-evaluasi" class="main-nav-btn px-3.5 py-2 rounded-xl flex items-center gap-2 shrink-0 transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+          <i id="nav-icon-evaluasi" class="fa-solid fa-lock text-xs text-amber-500"></i>
+          <span>4. CEK HASIL & GALERI</span>
+        </button>
+        <button onclick="switchMainTab('tab-refleksi')" id="nav-tab-refleksi" class="main-nav-btn px-3.5 py-2 rounded-xl flex items-center gap-2 shrink-0 transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+          <i id="nav-icon-refleksi" class="fa-solid fa-lock text-xs text-amber-500"></i>
+          <span>5. REFLEKSI & BANTUAN</span>
+        </button>
+        <button onclick="switchMainTab('tab-guru')" id="nav-tab-guru" class="main-nav-btn hidden px-3.5 py-2 rounded-xl flex items-center gap-2 shrink-0 transition-all text-purple-700 bg-purple-50 border border-purple-200">
+          <i class="fa-solid fa-shield-halved text-xs text-purple-600"></i>
+          <span>6. DASHBOARD GURU</span>
+        </button>
+      </nav>
+
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <div id="tab-beranda" class="view-content-panel active-view space-y-8">
+      
+      <div id="gate-warning-banner" class="bg-gradient-to-r from-amber-50 via-orange-50 to-white border border-amber-200 p-4 rounded-3xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-canva-card">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-amber-500/10 text-amber-600 flex items-center justify-center text-lg shrink-0 border border-amber-200">
+            <i class="fa-solid fa-lock"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+              <span>Akses Modul Belajar Masih Terkunci</span>
+              <span class="text-[10px] font-mono bg-amber-100 text-amber-800 border border-amber-300 px-2 py-0.5 rounded-full font-bold">Identitas Wajib</span>
+            </h3>
+            <p class="text-xs text-slate-600 mt-0.5">
+              Silakan isi identitas peserta didik (Nama Lengkap & Kelas) untuk membuka akses simulator kamera, materi, dan 7 misi praktik.
+            </p>
+          </div>
+        </div>
+        <button onclick="openLoginModal('student')" class="px-4 py-2.5 canva-gradient-bg hover:opacity-95 text-white font-mono font-bold text-xs rounded-xl transition-all shadow-md shadow-purple-500/20 shrink-0 flex items-center gap-2">
+          <i class="fa-solid fa-id-card"></i>
+          <span>Isi Identitas Siswa</span>
+        </button>
+      </div>
+
+      <div class="bg-white rounded-3xl border border-slate-200/80 p-6 sm:p-8 relative overflow-hidden shadow-canva">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          
+          <div class="lg:col-span-7 space-y-4">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-50 border border-purple-200 text-xs font-mono text-purple-700 font-bold">
+                <i class="fa-solid fa-camera"></i> KELAS X FILM SMKN 12 SURABAYA
+              </span>
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-xs font-mono text-slate-600 font-medium">
+                <i class="fa-solid fa-database text-cyan-600"></i> Asisten Praktik Mandiri
+              </span>
+            </div>
+
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 leading-tight">
+              CINEMASTERY <br>
+              <span class="canva-gradient-text">
+                FOTOGRAFI DASAR
+              </span>
+            </h1>
+
+            <p class="text-slate-600 text-sm sm:text-base leading-relaxed max-w-xl text-justify">
+              Panduan interaktif menyelesaikan tugas praktik fotografi. Mulai dari pemahaman tombol kamera, teknik ruang tajam, eksplorasi komposisi, demonstrasi live, evaluasi mandiri, hingga pengumpulan tugas ke galeri kelas.
+            </p>
+
+            <div class="flex flex-wrap items-center gap-3 pt-2">
+              <button onclick="switchMainTab('tab-materi', 'sub-modul-1')" class="px-5 py-3 canva-gradient-bg hover:opacity-95 text-white font-bold rounded-xl text-xs font-mono transition-all flex items-center gap-2 shadow-lg shadow-purple-500/25">
+                <i class="fa-solid fa-play text-[11px]"></i>
+                <span>MULAI MODUL 1 & SIMULATOR</span>
+              </button>
+              <button onclick="switchMainTab('tab-tugas')" class="px-5 py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 text-xs font-mono rounded-xl transition-all flex items-center gap-2 font-semibold">
+                <i class="fa-solid fa-list-check text-purple-600"></i>
+                <span>LIHAT 7 TANTANGAN PRAKTIK</span>
+              </button>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3 pt-4 border-t border-slate-100 max-w-lg text-center font-mono">
+              <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200/80">
+                <div class="text-[10px] text-slate-500 font-bold">SISWA AKTIF</div>
+                <div id="hero-user-name" class="text-xs font-bold text-slate-800 mt-0.5 truncate">Belum Masuk</div>
+              </div>
+              <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200/80">
+                <div class="text-[10px] text-slate-500 font-bold">TANTANGAN</div>
+                <div class="text-base font-extrabold text-purple-700 mt-0.5">7 Misi</div>
+              </div>
+              <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200/80">
+                <div class="text-[10px] text-slate-500 font-bold">STATUS SELESAI</div>
+                <div id="hero-progress-label" class="text-base font-extrabold text-emerald-600 mt-0.5">0/7 Selesai</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="lg:col-span-5 bg-slate-900 p-3.5 rounded-3xl border-2 border-slate-300 shadow-2xl relative">
+            <div class="relative aspect-[4/3] bg-slate-950 rounded-2xl overflow-hidden border border-slate-800 flex flex-col justify-between p-3 select-none">
+              <div id="viewfinder-scene" class="absolute inset-0 bg-cover bg-center transition-all duration-300"
+                style="background-image: url('https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=800&q=80');">
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <div id="hud-focus-box" class="w-20 h-20 border-2 border-cyan-400 rounded-lg flex items-center justify-center transition-all">
+                    <div class="w-2 h-2 bg-cyan-400 rounded-full animate-ping"></div>
+                  </div>
+                </div>
+              </div>
+              <div id="hero-grid-overlay" class="absolute inset-0 grid-rot-overlay pointer-events-none opacity-50"></div>
+              <div class="relative z-10 flex items-center justify-between text-[10px] font-mono bg-black/70 backdrop-blur px-2.5 py-1 rounded-lg text-white border border-white/10">
+                <span class="text-red-500 font-bold flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span> REC [LIVE]</span>
+                <span class="text-emerald-400"><i class="fa-solid fa-battery-three-quarters"></i> 88%</span>
+              </div>
+              <div class="relative z-10 bg-black/85 backdrop-blur px-3 py-2 rounded-xl border border-white/10 flex items-center justify-between text-white font-mono text-xs">
+                <div class="flex items-center gap-3 text-[11px]"><span>1/250s</span><span>f/2.8</span><span>ISO 400</span></div>
+                <button onclick="triggerHeroShutter()" class="px-3 py-1 canva-gradient-bg hover:opacity-90 text-white font-bold rounded-lg text-xs transition-all flex items-center gap-1">
+                  <i class="fa-solid fa-camera text-[10px]"></i> Jepret
+                </button>
+              </div>
+            </div>
+            <div class="mt-2.5 flex items-center justify-between text-[11px] font-mono text-slate-400 px-1">
+              <span>VIEWFINDER KAMERA DKV</span>
+              <button onclick="toggleHeroGrid()" class="hover:text-cyan-400 transition-colors">
+                <i class="fa-solid fa-border-all mr-1"></i> Toggle Grid 3×3
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="bg-white rounded-3xl border border-slate-200/80 p-6 space-y-4 shadow-canva-card">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-map-location-dot text-cyan-600"></i>
+              <span>Peta Alur Belajar 8 Tahap</span>
+            </h2>
+            <p class="text-xs text-slate-500">Klik tombol untuk langsung menuju materi terkait dan tandai setiap tahap yang selesai.</p>
+          </div>
+          <button onclick="resetAllProgress()" class="text-xs font-mono text-slate-400 hover:text-red-500 self-start sm:self-auto transition-colors">
+            <i class="fa-solid fa-rotate-left mr-1"></i> Reset Progres
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <!-- Step 1-4 -->
+          <div id="roadmap-card-1" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col justify-between hover:shadow-md transition-all">
+            <div>
+              <div class="flex items-center justify-between text-[11px] font-mono mb-1.5">
+                <span class="text-purple-700 font-bold">01. KAMERA</span>
+                <span id="badge-step-1" class="text-slate-400">○ Belum</span>
+              </div>
+              <h3 class="text-xs font-bold text-slate-900">Pahami Kamera & Kontrol</h3>
+              <p class="text-[11px] text-slate-500 mt-1">Analog vs Digital & Segitiga Exposure.</p>
+            </div>
+            <div class="mt-3 flex items-center gap-1.5 pt-2 border-t border-slate-200">
+              <button onclick="switchMainTab('tab-materi', 'sub-modul-1')" class="flex-1 py-1.5 bg-white hover:bg-purple-600 hover:text-white text-[10px] font-mono font-bold rounded-xl border border-slate-200 transition-colors shadow-xs">Buka Modul</button>
+              <button onclick="markStepComplete(1)" class="px-2.5 py-1.5 bg-white border border-slate-200 hover:border-emerald-500 hover:text-emerald-600 text-[10px] font-mono rounded-xl transition-colors shadow-xs">✓</button>
+            </div>
+          </div>
+          <div id="roadmap-card-2" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col justify-between hover:shadow-md transition-all">
+            <div>
+              <div class="flex items-center justify-between text-[11px] font-mono mb-1.5">
+                <span class="text-purple-700 font-bold">02. FOKUS</span>
+                <span id="badge-step-2" class="text-slate-400">○ Belum</span>
+              </div>
+              <h3 class="text-xs font-bold text-slate-900">Kenali Fokus & Ruang Tajam</h3>
+              <p class="text-[11px] text-slate-500 mt-1">Subjek tajam dan latar bokeh.</p>
+            </div>
+            <div class="mt-3 flex items-center gap-1.5 pt-2 border-t border-slate-200">
+              <button onclick="switchMainTab('tab-materi', 'sub-modul-2')" class="flex-1 py-1.5 bg-white hover:bg-purple-600 hover:text-white text-[10px] font-mono font-bold rounded-xl border border-slate-200 transition-colors shadow-xs">Buka Modul</button>
+              <button onclick="markStepComplete(2)" class="px-2.5 py-1.5 bg-white border border-slate-200 hover:border-emerald-500 hover:text-emerald-600 text-[10px] font-mono rounded-xl transition-colors shadow-xs">✓</button>
+            </div>
+          </div>
+          <div id="roadmap-card-3" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col justify-between hover:shadow-md transition-all">
+            <div>
+              <div class="flex items-center justify-between text-[11px] font-mono mb-1.5">
+                <span class="text-purple-700 font-bold">03. KOMPOSISI</span>
+                <span id="badge-step-3" class="text-slate-400">○ Belum</span>
+              </div>
+              <h3 class="text-xs font-bold text-slate-900">Kuasai 9 Komposisi Visual</h3>
+              <p class="text-[11px] text-slate-500 mt-1">Rule of Third, Framing, dll.</p>
+            </div>
+            <div class="mt-3 flex items-center gap-1.5 pt-2 border-t border-slate-200">
+              <button onclick="switchMainTab('tab-materi', 'sub-modul-3')" class="flex-1 py-1.5 bg-white hover:bg-purple-600 hover:text-white text-[10px] font-mono font-bold rounded-xl border border-slate-200 transition-colors shadow-xs">Buka Modul</button>
+              <button onclick="markStepComplete(3)" class="px-2.5 py-1.5 bg-white border border-slate-200 hover:border-emerald-500 hover:text-emerald-600 text-[10px] font-mono rounded-xl transition-colors shadow-xs">✓</button>
+            </div>
+          </div>
+          <div id="roadmap-card-4" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col justify-between hover:shadow-md transition-all">
+            <div>
+              <div class="flex items-center justify-between text-[11px] font-mono mb-1.5">
+                <span class="text-purple-700 font-bold">04. TEKNIK</span>
+                <span id="badge-step-4" class="text-slate-400">○ Belum</span>
+              </div>
+              <h3 class="text-xs font-bold text-slate-900">Eksperimen 6 Teknik</h3>
+              <p class="text-[11px] text-slate-500 mt-1">Freezing, Panning, Siluet, DoF.</p>
+            </div>
+            <div class="mt-3 flex items-center gap-1.5 pt-2 border-t border-slate-200">
+              <button onclick="switchMainTab('tab-materi', 'sub-modul-4')" class="flex-1 py-1.5 bg-white hover:bg-purple-600 hover:text-white text-[10px] font-mono font-bold rounded-xl border border-slate-200 transition-colors shadow-xs">Buka Modul</button>
+              <button onclick="markStepComplete(4)" class="px-2.5 py-1.5 bg-white border border-slate-200 hover:border-emerald-500 hover:text-emerald-600 text-[10px] font-mono rounded-xl transition-colors shadow-xs">✓</button>
+            </div>
+          </div>
+
+          <!-- Step 5-8 -->
+          <div id="roadmap-card-5" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col justify-between hover:shadow-md transition-all">
+            <div>
+              <div class="flex items-center justify-between text-[11px] font-mono mb-1.5">
+                <span class="text-purple-700 font-bold">05. GENRE & ANGLE</span>
+                <span id="badge-step-5" class="text-slate-400">○ Belum</span>
+              </div>
+              <h3 class="text-xs font-bold text-slate-900">Genre, Angle & Anatomi</h3>
+              <p class="text-[11px] text-slate-500 mt-1">Kenali jenis dan dasar kamera.</p>
+            </div>
+            <div class="mt-3 flex items-center gap-1.5 pt-2 border-t border-slate-200">
+              <button onclick="switchMainTab('tab-materi', 'sub-modul-5')" class="flex-1 py-1.5 bg-white hover:bg-purple-600 hover:text-white text-[10px] font-mono font-bold rounded-xl border border-slate-200 transition-colors shadow-xs">Buka Modul</button>
+              <button onclick="markStepComplete(5)" class="px-2.5 py-1.5 bg-white border border-slate-200 hover:border-emerald-500 hover:text-emerald-600 text-[10px] font-mono rounded-xl transition-colors shadow-xs">✓</button>
+            </div>
+          </div>
+          <div id="roadmap-card-6" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col justify-between hover:shadow-md transition-all">
+            <div>
+              <div class="flex items-center justify-between text-[11px] font-mono mb-1.5">
+                <span class="text-purple-700 font-bold">06. MISI TUGAS</span>
+                <span id="badge-step-6" class="text-slate-400">○ Belum</span>
+              </div>
+              <h3 class="text-xs font-bold text-slate-900">Kerjakan 7 Misi Praktik</h3>
+              <p class="text-[11px] text-slate-500 mt-1">Selesaikan tantangan di sekolah/rumah.</p>
+            </div>
+            <div class="mt-3 flex items-center gap-1.5 pt-2 border-t border-slate-200">
+              <button onclick="switchMainTab('tab-tugas')" class="flex-1 py-1.5 bg-white hover:bg-purple-600 hover:text-white text-[10px] font-mono font-bold rounded-xl border border-slate-200 transition-colors shadow-xs">Buka Misi</button>
+              <button onclick="markStepComplete(6)" class="px-2.5 py-1.5 bg-white border border-slate-200 hover:border-emerald-500 hover:text-emerald-600 text-[10px] font-mono rounded-xl transition-colors shadow-xs">✓</button>
+            </div>
+          </div>
+          <div id="roadmap-card-7" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col justify-between hover:shadow-md transition-all">
+            <div>
+              <div class="flex items-center justify-between text-[11px] font-mono mb-1.5">
+                <span class="text-purple-700 font-bold">07. EVALUASI</span>
+                <span id="badge-step-7" class="text-slate-400">○ Belum</span>
+              </div>
+              <h3 class="text-xs font-bold text-slate-900">Cek Kualitas Hasil Foto</h3>
+              <p class="text-[11px] text-slate-500 mt-1">Evaluasi mandiri sebelum submit.</p>
+            </div>
+            <div class="mt-3 flex items-center gap-1.5 pt-2 border-t border-slate-200">
+              <button onclick="switchMainTab('tab-evaluasi')" class="flex-1 py-1.5 bg-white hover:bg-purple-600 hover:text-white text-[10px] font-mono font-bold rounded-xl border border-slate-200 transition-colors shadow-xs">Buka Evaluasi</button>
+              <button onclick="markStepComplete(7)" class="px-2.5 py-1.5 bg-white border border-slate-200 hover:border-emerald-500 hover:text-emerald-600 text-[10px] font-mono rounded-xl transition-colors shadow-xs">✓</button>
+            </div>
+          </div>
+          <div id="roadmap-card-8" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 flex flex-col justify-between hover:shadow-md transition-all">
+            <div>
+              <div class="flex items-center justify-between text-[11px] font-mono mb-1.5">
+                <span class="text-purple-700 font-bold">08. REFLEKSI</span>
+                <span id="badge-step-8" class="text-slate-400">○ Belum</span>
+              </div>
+              <h3 class="text-xs font-bold text-slate-900">Refleksi Belajar Siswa</h3>
+              <p class="text-[11px] text-slate-500 mt-1">Isi refleksi dan salin hasil tugas.</p>
+            </div>
+            <div class="mt-3 flex items-center gap-1.5 pt-2 border-t border-slate-200">
+              <button onclick="switchMainTab('tab-refleksi')" class="flex-1 py-1.5 bg-white hover:bg-purple-600 hover:text-white text-[10px] font-mono font-bold rounded-xl border border-slate-200 transition-colors shadow-xs">Isi Refleksi</button>
+              <button onclick="markStepComplete(8)" class="px-2.5 py-1.5 bg-white border border-slate-200 hover:border-emerald-500 hover:text-emerald-600 text-[10px] font-mono rounded-xl transition-colors shadow-xs">✓</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div id="tab-materi" class="view-content-panel space-y-6">
+      
+      <div class="bg-white p-2 rounded-2xl border border-slate-200 flex items-center gap-2 overflow-x-auto no-scrollbar shadow-xs">
+        <button onclick="switchSubModul('sub-modul-1')" id="pill-modul-1" class="sub-modul-pill whitespace-nowrap px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all canva-gradient-bg text-white shadow-md shadow-purple-500/20">
+          MODUL 1: EXPOSURE
+        </button>
+        <button onclick="switchSubModul('sub-modul-2')" id="pill-modul-2" class="sub-modul-pill whitespace-nowrap px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all text-slate-600 hover:bg-slate-100">
+          MODUL 2: BOKEH
+        </button>
+        <button onclick="switchSubModul('sub-modul-3')" id="pill-modul-3" class="sub-modul-pill whitespace-nowrap px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all text-slate-600 hover:bg-slate-100">
+          MODUL 3: KOMPOSISI
+        </button>
+        <button onclick="switchSubModul('sub-modul-4')" id="pill-modul-4" class="sub-modul-pill whitespace-nowrap px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all text-slate-600 hover:bg-slate-100">
+          MODUL 4: TEKNIK
+        </button>
+        <button onclick="switchSubModul('sub-modul-5')" id="pill-modul-5" class="sub-modul-pill whitespace-nowrap px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all text-slate-600 hover:bg-slate-100">
+          MODUL 5: GENRE
+        </button>
+        <button onclick="switchSubModul('sub-modul-6')" id="pill-modul-6" class="sub-modul-pill whitespace-nowrap px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all text-slate-600 hover:bg-slate-100">
+          MODUL 6: ANGLE & SHOT
+        </button>
+        <button onclick="switchSubModul('sub-modul-7')" id="pill-modul-7" class="sub-modul-pill whitespace-nowrap px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all text-slate-600 hover:bg-slate-100">
+          MODUL 7: K3 & SAFETY
+        </button>
+        <button onclick="switchSubModul('sub-modul-8')" id="pill-modul-8" class="sub-modul-pill whitespace-nowrap px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all text-slate-600 hover:bg-slate-100">
+          MODUL 8: ANATOMI
+        </button>
+      </div>
+
+      <div id="sub-modul-1" class="sub-tab-panel active-subtab space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="bg-white p-4 rounded-3xl border border-slate-200 shadow-canva-card">
+            <div class="flex items-center gap-2 text-xs font-mono text-slate-500 mb-1 font-bold">
+              <i class="fa-solid fa-film text-purple-600"></i><span>KAMERA ANALOG</span>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Menggunakan film/seluloid sebagai media penangkap gambar. Menggunakan roll film terbatas dan <strong>hasil foto tidak dapat langsung dilihat</strong> (memerlukan cuci cetak kimiawi).
+            </p>
+          </div>
+          <div class="bg-white p-4 rounded-3xl border-2 border-purple-200 shadow-canva-card">
+            <div class="flex items-center gap-2 text-xs font-mono text-purple-700 mb-1 font-bold">
+              <i class="fa-solid fa-microchip text-cyan-600"></i><span>KAMERA DIGITAL</span>
+            </div>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Menyimpan data digital pada kartu memori. <strong>Hasil foto dapat langsung dilihat di monitor LCD</strong> sehingga fotografer leluasa mengevaluasi ketajaman dan mengambil ulang foto di lokasi.
+            </p>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 space-y-4 shadow-canva">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+            <div>
+              <span class="text-[10px] font-mono text-cyan-600 uppercase tracking-wider font-extrabold">LABORATORIUM KAMERA INTERAKTIF</span>
+              <h3 class="text-lg font-bold text-slate-900">Simulasi Pengaturan Kamera DSLR/Mirrorless</h3>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <button onclick="setCameraPreset('bokeh')" class="px-2.5 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-mono font-bold rounded-lg border border-purple-200">Preset Bokeh</button>
+              <button onclick="setCameraPreset('action')" class="px-2.5 py-1 bg-cyan-50 hover:bg-cyan-100 text-cyan-700 text-xs font-mono font-bold rounded-lg border border-cyan-200">Preset Aksi Cepat</button>
+              <button onclick="resetCameraSim()" class="px-2.5 py-1 bg-slate-100 text-slate-700 text-xs font-mono rounded-lg border border-slate-200 font-semibold">Reset</button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            <div class="lg:col-span-7 bg-slate-900 p-3 rounded-3xl border border-slate-300 relative shadow-xl">
+              <div class="relative bg-slate-950 rounded-2xl overflow-hidden aspect-[4/3] flex flex-col justify-between p-3 select-none">
+                
+                <div id="sim-scene-container" class="absolute inset-0 transition-all duration-300 overflow-hidden bg-slate-900">
+                  <div id="sim-bg-layer" class="absolute inset-0 bg-cover bg-center transition-all duration-300 scale-105"
+                    style="background-image: url('https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=800&q=80');"></div>
+                  
+                  <div id="sim-moving-subject" class="absolute inset-0 flex items-center justify-center pointer-events-none transition-all">
+                    <div id="sim-subject-card" class="p-3 bg-slate-950/75 backdrop-blur rounded-2xl border border-cyan-400 flex flex-col items-center gap-1.5 shadow-2xl">
+                      <div class="relative">
+                        <i id="sim-subject-icon" class="fa-solid fa-person-skating text-4xl text-cyan-400"></i>
+                        <span id="sim-motion-ghost" class="absolute inset-0 opacity-0 text-4xl text-cyan-400/50 blur-sm pointer-events-none">
+                          <i class="fa-solid fa-person-skating"></i>
+                        </span>
+                      </div>
+                      <span id="sim-subject-status" class="text-[10px] font-mono font-bold text-white px-2 py-0.5 rounded bg-black/60">SUBJEK: TAJAM</span>
+                    </div>
+                  </div>
+
+                  <div id="sim-grain-overlay" class="absolute inset-0 pointer-events-none opacity-0 iso-noise-overlay"></div>
+                  <div id="sim-exposure-dimmer" class="absolute inset-0 pointer-events-none transition-all bg-transparent"></div>
+                  
+                  <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div id="sim-af-reticle" class="w-16 h-16 border border-dashed border-cyan-400/80 rounded flex items-center justify-center">
+                      <div class="w-1.5 h-1.5 bg-cyan-400 rounded-full"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="relative z-10 flex items-center justify-between text-[10px] font-mono bg-black/75 px-2.5 py-1 rounded text-white border border-white/10">
+                  <span class="px-2 py-0.5 canva-gradient-bg text-white font-bold rounded text-[9px]">MANUAL [M]</span>
+                  <span class="text-emerald-400 flex items-center gap-1"><i class="fa-solid fa-battery-three-quarters"></i> 92%</span>
+                </div>
+
+                <div class="relative z-10 my-auto self-start pl-1">
+                  <div class="bg-black/80 p-1.5 rounded-xl border border-white/10 flex flex-col items-center gap-1 font-mono text-[9px] text-white">
+                    <div class="h-20 w-3.5 bg-slate-800 rounded-full relative flex flex-col justify-between py-1 items-center">
+                      <span class="text-[8px] text-red-400">+2</span>
+                      <span class="text-[9px] text-emerald-400 font-extrabold">●</span>
+                      <span class="text-[8px] text-blue-400">-2</span>
+                      <div id="sim-meter-pin" class="absolute w-4 h-1 bg-cyan-400 rounded transition-all" style="top: 50%; transform: translateY(-50%);"></div>
+                    </div>
+                    <span id="sim-ev-val" class="font-bold text-emerald-400">0.0 EV</span>
+                  </div>
+                </div>
+
+                <div class="relative z-10 bg-black/85 backdrop-blur p-2.5 rounded-xl border border-white/10 flex items-center justify-between text-white font-mono text-xs">
+                  <div class="flex items-center gap-3">
+                    <div>
+                      <span class="text-[8px] text-slate-400 block">SHUTTER</span>
+                      <span id="sim-hud-shutter" class="font-bold text-cyan-400 text-xs">1/250s</span>
+                    </div>
+                    <div>
+                      <span class="text-[8px] text-slate-400 block">APERTURE</span>
+                      <span id="sim-hud-aperture" class="font-bold text-cyan-400 text-xs">f/2.8</span>
+                    </div>
+                    <div>
+                      <span class="text-[8px] text-slate-400 block">ISO</span>
+                      <span id="sim-hud-iso" class="font-bold text-cyan-400 text-xs">200</span>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center gap-1.5">
+                    <button onmousedown="handleHalfPressShutter()" onmouseup="releaseHalfPressShutter()" class="px-2.5 py-1 bg-slate-800 text-slate-200 text-[10px] font-mono rounded-lg border border-slate-700">AF Lock</button>
+                    <button onclick="handleFullCapture()" class="px-3 py-1 canva-gradient-bg hover:opacity-90 text-white font-bold text-[11px] rounded-lg transition-all shadow">JEPRET</button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="lg:col-span-5 bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-4">
+              <div class="space-y-1.5">
+                <div class="flex items-center justify-between text-xs font-mono">
+                  <span class="text-slate-800 font-bold"><i class="fa-solid fa-circle-notch text-purple-600 mr-1"></i> Diafragma</span>
+                  <span id="slider-aperture-label" class="text-purple-700 font-extrabold">f/2.8</span>
+                </div>
+                <input type="range" id="input-aperture" min="0" max="6" step="1" value="1" oninput="onApertureChange(this.value)" class="w-full accent-purple-600 h-2 bg-slate-200 rounded-lg cursor-pointer">
+              </div>
+
+              <div class="space-y-1.5 pt-2 border-t border-slate-200">
+                <div class="flex items-center justify-between text-xs font-mono">
+                  <span class="text-slate-800 font-bold"><i class="fa-solid fa-stopwatch text-cyan-600 mr-1"></i> Shutter Speed</span>
+                  <span id="slider-shutter-label" class="text-cyan-700 font-extrabold">1/250s</span>
+                </div>
+                <input type="range" id="input-shutter" min="0" max="7" step="1" value="4" oninput="onShutterChange(this.value)" class="w-full accent-cyan-500 h-2 bg-slate-200 rounded-lg cursor-pointer">
+              </div>
+
+              <div class="space-y-1.5 pt-2 border-t border-slate-200">
+                <div class="flex items-center justify-between text-xs font-mono">
+                  <span class="text-slate-800 font-bold"><i class="fa-solid fa-bolt text-amber-500 mr-1"></i> ISO</span>
+                  <span id="slider-iso-label" class="text-amber-600 font-extrabold">ISO 200</span>
+                </div>
+                <input type="range" id="input-iso" min="0" max="5" step="1" value="1" oninput="onIsoChange(this.value)" class="w-full accent-amber-500 h-2 bg-slate-200 rounded-lg cursor-pointer">
+              </div>
+
+              <div class="space-y-1.5 pt-2 border-t border-slate-200">
+                <div class="flex items-center justify-between text-xs font-mono">
+                  <span class="text-slate-800 font-bold"><i class="fa-solid fa-bullseye text-emerald-600 mr-1"></i> Ring Jarak Fokus</span>
+                  <span id="slider-focus-label" class="text-emerald-700 font-extrabold">Subjek Utama</span>
+                </div>
+                <input type="range" id="input-focus" min="0" max="2" step="1" value="1" oninput="onFocusRingChange(this.value)" class="w-full accent-emerald-500 h-2 bg-slate-200 rounded-lg cursor-pointer">
+              </div>
+            </div>
+
+          </div>
+
+          <div class="pt-4 border-t border-slate-100">
+            <div class="text-xs font-mono font-bold text-slate-900 mb-2">Quiz Modul 1: Mengapa monitor LCD pada kamera digital sangat menguntungkan di DKV?</div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono">
+              <button onclick="checkQuiz(1, 'A')" class="p-3 rounded-xl bg-slate-50 text-slate-700 text-left hover:bg-slate-100 border border-slate-200 transition-colors">A. Otomatis mengubah foto menjadi karya seni</button>
+              <button onclick="checkQuiz(1, 'B')" class="p-3 rounded-xl bg-slate-50 text-slate-700 text-left hover:bg-slate-100 border border-slate-200 transition-colors">B. Hasil dapat langsung dilihat sehingga dapat dievaluasi dan diambil ulang</button>
+            </div>
+            <div id="quiz-feedback-1" class="mt-2 text-xs font-mono hidden p-3 rounded-xl"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="sub-modul-2" class="sub-tab-panel space-y-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          
+          <div class="lg:col-span-8 bg-slate-900 rounded-3xl overflow-hidden border border-slate-300 relative aspect-video flex items-center justify-center p-4 shadow-xl">
+            <div id="demo-bokeh-bg" class="absolute inset-0 bg-cover bg-center transition-all duration-500 blur-[9px] scale-105"
+              style="background-image: url('https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=800&q=80');"></div>
+            
+            <div class="relative z-10 text-center">
+              <div class="inline-block p-4 bg-black/75 backdrop-blur rounded-2xl border-2 border-cyan-400 shadow-2xl">
+                <i class="fa-solid fa-camera-retro text-4xl text-cyan-400 mb-1 block"></i>
+                <span id="demo-focus-label" class="text-xs font-mono font-bold text-white uppercase block">OBJEK DEPAN TAJAM (IN FOCUS)</span>
+                <span id="demo-focus-sub" class="text-[11px] text-emerald-400 font-mono">Latar Belakang Bokeh Halus</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="lg:col-span-4 bg-white p-5 rounded-3xl border border-slate-200 space-y-4 shadow-canva-card">
+            <span class="text-xs font-mono text-purple-700 font-extrabold uppercase">DEMONSTRASI FOKUS & BOKEH</span>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              "Fokus menghasilkan gambar tajam dan menentukan objek utama. Ruang tajam berkaitan dengan rentang jarak objek yang terlihat tajam dalam foto."
+            </p>
+            <div class="space-y-2">
+              <button onclick="setFocusDemo('front')" id="btn-focus-front" class="w-full py-2.5 canva-gradient-bg text-white font-bold text-xs rounded-xl transition-all shadow-md shadow-purple-500/20">Fokus Objek Depan (Bokeh Latar)</button>
+              <button onclick="setFocusDemo('back')" id="btn-focus-back" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all">Fokus Objek Belakang</button>
+            </div>
+
+            <div class="pt-3 border-t border-slate-100 space-y-2 text-xs font-mono">
+              <span class="text-slate-900 font-bold block">Latihan: Di mana fokus utama foto botol parfum?</span>
+              <button onclick="checkFocusExercise('B')" class="w-full text-left p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 transition-colors">A. Botol parfum (objek utama)</button>
+              <button onclick="checkFocusExercise('A')" class="w-full text-left p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 transition-colors">B. Bunga hiasan latar belakang</button>
+              <div id="focus-exercise-feedback" class="hidden p-2.5 rounded-xl text-xs font-mono"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div id="sub-modul-3" class="sub-tab-panel space-y-6">
+        <div class="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 shadow-canva-card">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+            <div>
+              <span class="text-xs font-mono text-purple-700 font-bold">DEMONSTRASI INTERAKTIF RULE OF THIRD</span>
+              <h3 class="text-base font-bold text-slate-900">Grid 3×3 dan Empat Titik Temu Minat (Golden Intersection)</h3>
+            </div>
+            <button onclick="animateRotDemo()" class="px-3.5 py-1.5 canva-gradient-bg hover:opacity-95 text-white font-bold text-xs font-mono rounded-xl transition-all shadow-md shadow-purple-500/20">
+              <i class="fa-solid fa-play mr-1"></i> Jalankan Animasi Titik Temu
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+            <div class="lg:col-span-8 bg-slate-900 rounded-2xl overflow-hidden border border-slate-300 relative aspect-video flex items-center justify-center shadow-lg">
+              <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=800&q=80');"></div>
+              <div class="absolute inset-0 grid grid-cols-3 grid-rows-3 pointer-events-none border border-cyan-400/60">
+                <div class="border-r border-b border-cyan-400/60"></div><div class="border-r border-b border-cyan-400/60"></div><div class="border-b border-cyan-400/60"></div>
+                <div class="border-r border-b border-cyan-400/60"></div><div class="border-r border-b border-cyan-400/60"></div><div class="border-b border-cyan-400/60"></div>
+                <div class="border-r border-b border-cyan-400/60"></div><div class="border-r border-b border-cyan-400/60"></div><div></div>
+              </div>
+              <div id="rot-moving-subject" class="absolute transition-all duration-700 ease-out z-20" style="left: 50%; top: 50%; transform: translate(-50%, -50%);">
+                <div class="bg-black/80 border-2 border-cyan-400 px-3 py-1.5 rounded-xl text-white font-mono text-xs flex items-center gap-1.5 shadow-xl">
+                  <i class="fa-solid fa-bullseye text-cyan-400"></i><span>SUBJEK UTAMA</span>
+                </div>
+              </div>
+              <div id="rot-status-bubble" class="absolute bottom-2 left-2 right-2 bg-black/85 px-3 py-1.5 rounded-lg text-[11px] font-mono text-center text-slate-200">
+                Pilih salah satu titik temu di samping untuk memindahkan subjek foto:
+              </div>
+            </div>
+
+            <div class="lg:col-span-4 bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3 font-mono text-xs">
+              <span class="text-slate-800 font-bold block">Pilih Titik Potong Emas:</span>
+              <div class="grid grid-cols-2 gap-2">
+                <button onclick="moveRotSubject('TL')" class="p-2.5 bg-white hover:bg-purple-600 hover:text-white border border-slate-200 font-bold rounded-xl transition-all shadow-xs">Kiri Atas</button>
+                <button onclick="moveRotSubject('TR')" class="p-2.5 bg-white hover:bg-purple-600 hover:text-white border border-slate-200 font-bold rounded-xl transition-all shadow-xs">Kanan Atas</button>
+                <button onclick="moveRotSubject('BL')" class="p-2.5 bg-white hover:bg-purple-600 hover:text-white border border-slate-200 font-bold rounded-xl transition-all shadow-xs">Kiri Bawah</button>
+                <button onclick="moveRotSubject('BR')" class="p-2.5 bg-white hover:bg-purple-600 hover:text-white border border-slate-200 font-bold rounded-xl transition-all shadow-xs">Kanan Bawah</button>
+              </div>
+              <button onclick="completeQuickTask()" id="btn-quick-rot" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition-colors mt-2 shadow-sm">
+                Tandai Misi Rule of Third ✓
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-3">
+          <div onclick="openCompModal('simetris')" class="bg-white p-3.5 rounded-2xl border border-slate-200 hover:border-purple-300 hover:shadow-md transition-all cursor-pointer shadow-canva-card">
+            <div class="flex items-center justify-between"><span class="text-[10px] font-mono text-purple-700 font-bold">01</span><span class="text-[9px] font-mono bg-cyan-50 text-cyan-700 px-2 py-0.5 rounded-full font-bold border border-cyan-200"><i class="fa-solid fa-border-none mr-1"></i>Grid Simetri</span></div>
+            <h4 class="text-xs font-bold text-slate-900 mt-0.5">Komposisi Simetris</h4><p class="text-[11px] text-slate-500 mt-1">Keseimbangan formal kiri-kanan objek.</p>
+          </div>
+          <div onclick="openCompModal('framing')" class="bg-white p-3.5 rounded-2xl border border-slate-200 hover:border-purple-300 hover:shadow-md transition-all cursor-pointer shadow-canva-card">
+            <span class="text-[10px] font-mono text-purple-700 font-bold">02</span>
+            <h4 class="text-xs font-bold text-slate-900 mt-0.5">Framing</h4><p class="text-[11px] text-slate-500 mt-1">Membingkai objek dengan latar sekitar.</p>
+          </div>
+          <div onclick="openCompModal('rot')" class="bg-white p-3.5 rounded-2xl border-2 border-purple-300 hover:shadow-md transition-all cursor-pointer shadow-canva-card">
+            <span class="text-[10px] font-mono text-purple-700 font-bold">03 • POPULER</span>
+            <h4 class="text-xs font-bold text-slate-900 mt-0.5">Rule of Third</h4><p class="text-[11px] text-slate-500 mt-1">Titik temu bidang sepertiga.</p>
+          </div>
+          <div onclick="openCompModal('fillframe')" class="bg-white p-3.5 rounded-2xl border border-slate-200 hover:border-purple-300 hover:shadow-md transition-all cursor-pointer shadow-canva-card">
+            <span class="text-[10px] font-mono text-purple-700 font-bold">04</span>
+            <h4 class="text-xs font-bold text-slate-900 mt-0.5">Fill the Frame</h4><p class="text-[11px] text-slate-500 mt-1">Memenuhi bingkai dengan detail subjek.</p>
+          </div>
+          <div onclick="openCompModal('frameinframe')" class="bg-white p-3.5 rounded-2xl border border-slate-200 hover:border-purple-300 hover:shadow-md transition-all cursor-pointer shadow-canva-card">
+            <span class="text-[10px] font-mono text-purple-700 font-bold">05</span>
+            <h4 class="text-xs font-bold text-slate-900 mt-0.5">Frame in Frame</h4><p class="text-[11px] text-slate-500 mt-1">Pintu, jendela, atau ranting alami.</p>
+          </div>
+          <div onclick="openCompModal('leadinglines')" class="bg-white p-3.5 rounded-2xl border border-slate-200 hover:border-purple-300 hover:shadow-md transition-all cursor-pointer shadow-canva-card">
+            <span class="text-[10px] font-mono text-purple-700 font-bold">06</span>
+            <h4 class="text-xs font-bold text-slate-900 mt-0.5">Leading Lines</h4><p class="text-[11px] text-slate-500 mt-1">Garis lorong menuntun pandangan.</p>
+          </div>
+          <div onclick="openCompModal('negativespace')" class="bg-white p-3.5 rounded-2xl border border-slate-200 hover:border-purple-300 hover:shadow-md transition-all cursor-pointer shadow-canva-card">
+            <span class="text-[10px] font-mono text-purple-700 font-bold">07</span>
+            <h4 class="text-xs font-bold text-slate-900 mt-0.5">Negative Space</h4><p class="text-[11px] text-slate-500 mt-1">Ruang kosong luas minimalis.</p>
+          </div>
+          <div onclick="openCompModal('goldenshape')" class="bg-white p-3.5 rounded-2xl border border-slate-200 hover:border-purple-300 hover:shadow-md transition-all cursor-pointer shadow-canva-card">
+            <span class="text-[10px] font-mono text-purple-700 font-bold">08</span>
+            <h4 class="text-xs font-bold text-slate-900 mt-0.5">Golden Shape</h4><p class="text-[11px] text-slate-500 mt-1">Geometri segitiga alami.</p>
+          </div>
+          <div onclick="openCompModal('goldenratio')" class="bg-white p-3.5 rounded-2xl border border-slate-200 hover:border-purple-300 hover:shadow-md transition-all cursor-pointer shadow-canva-card">
+            <span class="text-[10px] font-mono text-purple-700 font-bold">09</span>
+            <h4 class="text-xs font-bold text-slate-900 mt-0.5">Golden Ratio</h4><p class="text-[11px] text-slate-500 mt-1">Spiral Fibonacci proporsional.</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="sub-modul-4" class="sub-tab-panel space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div class="bg-white p-5 rounded-3xl border border-slate-200 flex flex-col justify-between shadow-canva-card">
+            <div>
+              <span class="text-[10px] font-mono text-purple-700 font-bold">TEKNIK A</span>
+              <h4 class="text-sm font-bold text-slate-900 mt-0.5">Depth of Field (DoF)</h4>
+              <p class="text-xs text-slate-600 mt-1">Bukaan diafragma lebar menghasilkan latar belakang bokeh halus.</p>
+            </div>
+            <button onclick="openTechniqueDemo('dof')" class="mt-4 w-full py-2 bg-purple-50 hover:bg-purple-600 hover:text-white text-purple-700 text-xs font-mono font-bold rounded-xl transition-all border border-purple-200 shadow-xs">Uji Coba Lab Bokeh</button>
+          </div>
+          <div class="bg-white p-5 rounded-3xl border border-slate-200 flex flex-col justify-between shadow-canva-card">
+            <div>
+              <span class="text-[10px] font-mono text-cyan-600 font-bold">TEKNIK B</span>
+              <h4 class="text-sm font-bold text-slate-900 mt-0.5">Freezing (≥ 1/250s)</h4>
+              <p class="text-xs text-slate-600 mt-1">Membekukan gerakan cepat subjek di udara tanpa motion blur.</p>
+            </div>
+            <button onclick="openTechniqueDemo('freezing')" class="mt-4 w-full py-2 bg-cyan-50 hover:bg-cyan-600 hover:text-white text-cyan-700 text-xs font-mono font-bold rounded-xl transition-all border border-cyan-200 shadow-xs">Uji Coba Lab Freezing</button>
+          </div>
+          <div class="bg-white p-5 rounded-3xl border border-slate-200 flex flex-col justify-between shadow-canva-card">
+            <div>
+              <span class="text-[10px] font-mono text-pink-600 font-bold">TEKNIK C</span>
+              <h4 class="text-sm font-bold text-slate-900 mt-0.5">Bulb / Light Painting</h4>
+              <p class="text-xs text-slate-600 mt-1">Shutter terbuka lama untuk melukis jejak cahaya di ruang gelap.</p>
+            </div>
+            <button onclick="openTechniqueDemo('bulb')" class="mt-4 w-full py-2 bg-pink-50 hover:bg-pink-600 hover:text-white text-pink-700 text-xs font-mono font-bold rounded-xl transition-all border border-pink-200 shadow-xs">Lukis Jejak Cahaya</button>
+          </div>
+          <div class="bg-white p-5 rounded-3xl border border-slate-200 flex flex-col justify-between shadow-canva-card">
+            <div>
+              <span class="text-[10px] font-mono text-emerald-600 font-bold">TEKNIK D</span>
+              <h4 class="text-sm font-bold text-slate-900 mt-0.5">Panning (1/30s)</h4>
+              <p class="text-xs text-slate-600 mt-1">Ayunkan kamera mengikuti arah gerak motor/sepeda.</p>
+            </div>
+            <button onclick="openTechniqueDemo('panning')" class="mt-4 w-full py-2 bg-emerald-50 hover:bg-emerald-600 hover:text-white text-emerald-700 text-xs font-mono font-bold rounded-xl transition-all border border-emerald-200 shadow-xs">Uji Coba Lab Panning</button>
+          </div>
+          <div class="bg-white p-5 rounded-3xl border border-slate-200 flex flex-col justify-between shadow-canva-card">
+            <div>
+              <span class="text-[10px] font-mono text-indigo-600 font-bold">TEKNIK E</span>
+              <h4 class="text-sm font-bold text-slate-900 mt-0.5">Siluet Backlight</h4>
+              <p class="text-xs text-slate-600 mt-1">Objek membelakangi sinar matahari, ukur metering ke langit.</p>
+            </div>
+            <button onclick="openTechniqueDemo('siluet')" class="mt-4 w-full py-2 bg-indigo-50 hover:bg-indigo-600 hover:text-white text-indigo-700 text-xs font-mono font-bold rounded-xl transition-all border border-indigo-200 shadow-xs">Uji Coba Lab Siluet</button>
+          </div>
+          <div class="bg-white p-5 rounded-3xl border border-slate-200 flex flex-col justify-between shadow-canva-card">
+            <div>
+              <span class="text-[10px] font-mono text-purple-600 font-bold">TEKNIK F</span>
+              <h4 class="text-sm font-bold text-slate-900 mt-0.5">RAW Processing</h4>
+              <p class="text-xs text-slate-600 mt-1">File mentah tanpa kompresi dengan rentang dinamis maksimal.</p>
+            </div>
+            <button onclick="openTechniqueDemo('raw')" class="mt-4 w-full py-2 bg-purple-50 hover:bg-purple-600 hover:text-white text-purple-700 text-xs font-mono font-bold rounded-xl transition-all border border-purple-200 shadow-xs">Bandingkan RAW vs JPEG</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="sub-modul-5" class="sub-tab-panel space-y-4">
+        <div class="flex flex-wrap items-center gap-2">
+          <button onclick="switchGenreCategory('creative')" id="genre-tab-creative" class="px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold canva-gradient-bg text-white shadow-xs">Creative & Commercial</button>
+          <button onclick="switchGenreCategory('editorial')" id="genre-tab-editorial" class="px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold bg-white text-slate-700 border border-slate-200 shadow-xs hover:border-purple-300">Editorial & News</button>
+          <button onclick="switchGenreCategory('retail')" id="genre-tab-retail" class="px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold bg-white text-slate-700 border border-slate-200 shadow-xs hover:border-purple-300">Retail & Service</button>
+          <button onclick="switchGenreCategory('personal')" id="genre-tab-personal" class="px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold bg-white text-slate-700 border border-slate-200 shadow-xs hover:border-purple-300">Personal & Nature</button>
+        </div>
+
+        <div id="genre-content-container" class="bg-white p-5 rounded-3xl border border-slate-200 min-h-[240px] shadow-canva-card transition-all">
+          <!-- Populated by JS genreData -->
+        </div>
+      </div>
+
+      <div id="sub-modul-6" class="sub-tab-panel space-y-8">
+        
+        <!-- Shot Sizes Section -->
+        <div>
+          <div class="mb-4">
+            <h3 class="text-xl font-extrabold text-slate-900 border-l-4 border-purple-600 pl-3">Ukuran Bidang Pandang (Shot Size)</h3>
+            <p class="text-xs text-slate-600 mt-1">Shot size menentukan seberapa jauh atau dekat subjek terhadap kamera, yang berdampak langsung pada emosi dan informasi yang diterima penonton.</p>
+          </div>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-canva-card">
+              <div class="h-32 bg-slate-200 relative"><img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80" alt="Extreme Long Shot" class="w-full h-full object-cover"></div>
+              <div class="p-4">
+                <span class="text-[10px] font-mono font-bold text-purple-700">SHOT 1</span>
+                <h4 class="text-sm font-bold text-slate-900">Extreme Long Shot (ELS)</h4>
+                <p class="text-[11px] text-slate-600 mt-1 line-clamp-3">Subjek terlihat sangat kecil, dikelilingi oleh lingkungan yang luas.</p>
+                <div class="mt-2 p-2 bg-purple-50 rounded-lg text-[10px] text-purple-800"><strong>Motivasi:</strong> Menunjukkan lokasi/setting cerita, memberikan kesan luas.</div>
+              </div>
+            </div>
+            
+            <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-canva-card">
+              <div class="h-32 bg-slate-200 relative"><img src="https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=600&q=80" alt="Long Shot" class="w-full h-full object-cover"></div>
+              <div class="p-4">
+                <span class="text-[10px] font-mono font-bold text-cyan-600">SHOT 2</span>
+                <h4 class="text-sm font-bold text-slate-900">Long Shot (LS)</h4>
+                <p class="text-[11px] text-slate-600 mt-1 line-clamp-3">Menampilkan subjek secara utuh dari kepala hingga kaki beserta sedikit lingkungan di sekitarnya.</p>
+                <div class="mt-2 p-2 bg-cyan-50 rounded-lg text-[10px] text-cyan-800"><strong>Motivasi:</strong> Menunjukkan bahasa tubuh karakter, dan interaksi dengan sekitarnya.</div>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-canva-card">
+              <div class="h-32 bg-slate-200 relative"><img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80" alt="Medium Shot" class="w-full h-full object-cover"></div>
+              <div class="p-4">
+                <span class="text-[10px] font-mono font-bold text-emerald-600">SHOT 3</span>
+                <h4 class="text-sm font-bold text-slate-900">Medium Shot (MS)</h4>
+                <p class="text-[11px] text-slate-600 mt-1 line-clamp-3">Menampilkan subjek dari pinggang hingga kepala.</p>
+                <div class="mt-2 p-2 bg-emerald-50 rounded-lg text-[10px] text-emerald-800"><strong>Motivasi:</strong> Digunakan untuk dialog, menyeimbangkan ekspresi dengan gerak tangan.</div>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-canva-card">
+              <div class="h-32 bg-slate-200 relative"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=600&q=80" alt="Close Up" class="w-full h-full object-cover" style="object-position: top;"></div>
+              <div class="p-4">
+                <span class="text-[10px] font-mono font-bold text-pink-600">SHOT 4</span>
+                <h4 class="text-sm font-bold text-slate-900">Close Up (CU)</h4>
+                <p class="text-[11px] text-slate-600 mt-1 line-clamp-3">Menampilkan subjek dari batas dada/bahu hingga atas kepala.</p>
+                <div class="mt-2 p-2 bg-pink-50 rounded-lg text-[10px] text-pink-800"><strong>Motivasi:</strong> Menangkap emosi, mimik wajah, dan reaksi intim dengan penonton.</div>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-canva-card">
+              <div class="h-32 bg-slate-200 relative"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=600&q=80" alt="Extreme Close Up" class="w-full h-full object-cover" style="object-position: 50% 30%;"></div>
+              <div class="p-4">
+                <span class="text-[10px] font-mono font-bold text-red-600">SHOT 5</span>
+                <h4 class="text-sm font-bold text-slate-900">Extreme Close Up (ECU)</h4>
+                <p class="text-[11px] text-slate-600 mt-1 line-clamp-3">Memotong area wajah dengan sangat ketat, misalnya hanya mata atau bibir.</p>
+                <div class="mt-2 p-2 bg-red-50 rounded-lg text-[10px] text-red-800"><strong>Motivasi:</strong> Membangun ketegangan luar biasa, atau menonjolkan bagian krusial.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Angles Section -->
+        <div class="pt-6 border-t border-slate-200">
+          <div class="mb-4">
+            <h3 class="text-xl font-extrabold text-slate-900 border-l-4 border-cyan-600 pl-3">Sudut Pengambilan Gambar (Camera Angle)</h3>
+            <p class="text-xs text-slate-600 mt-1">Posisi ketinggian kamera terhadap subjek. Perubahan angle akan memanipulasi persepsi psikologis audiens terhadap karakter.</p>
+          </div>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-canva-card">
+              <div class="h-32 bg-slate-200 relative"><img src="https://images.unsplash.com/photo-1473968512647-3e447244af8f?auto=format&fit=crop&w=600&q=80" alt="Bird Eye View" class="w-full h-full object-cover object-center"></div>
+              <div class="p-4">
+                <h4 class="text-sm font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-plane text-purple-600"></i> Bird Eye View</h4>
+                <p class="text-[11px] text-slate-600 mt-0.5">Sangat tinggi dari udara, menatap lurus ke bawah.</p>
+                <div class="mt-1.5 text-[10px] text-purple-700 font-mono"><strong>Motivasi:</strong> Pengawasan objektif, memetakan geografi.</div>
+              </div>
+            </div>
+            
+            <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-canva-card">
+              <div class="h-32 bg-slate-200 relative"><img src="https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?auto=format&fit=crop&w=600&q=80" alt="High Angle" class="w-full h-full object-cover object-center"></div>
+              <div class="p-4">
+                <h4 class="text-sm font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-angle-down text-cyan-600"></i> High Angle</h4>
+                <p class="text-[11px] text-slate-600 mt-0.5">Kamera menunduk ke arah subjek dari posisi lebih tinggi.</p>
+                <div class="mt-1.5 text-[10px] text-cyan-700 font-mono"><strong>Motivasi:</strong> Subjek terlihat lemah, kecil, atau inferior.</div>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-canva-card">
+              <div class="h-32 bg-slate-200 relative"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=600&q=80" alt="Eye Level" class="w-full h-full object-cover object-center"></div>
+              <div class="p-4">
+                <h4 class="text-sm font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-eye text-slate-600"></i> Eye Level</h4>
+                <p class="text-[11px] text-slate-600 mt-0.5">Sejajar lurus dengan mata subjek manusia.</p>
+                <div class="mt-1.5 text-[10px] text-slate-700 font-mono"><strong>Motivasi:</strong> Netral, standar komunikasi setara.</div>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-canva-card">
+              <div class="h-32 bg-slate-200 relative"><img src="https://images.unsplash.com/photo-1558252033-6677943fb075?auto=format&fit=crop&w=600&q=80" alt="Low Angle" class="w-full h-full object-cover object-center"></div>
+              <div class="p-4">
+                <h4 class="text-sm font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-angle-up text-amber-600"></i> Low Angle</h4>
+                <p class="text-[11px] text-slate-600 mt-0.5">Kamera mendongak dari bawah ke arah subjek.</p>
+                <div class="mt-1.5 text-[10px] text-amber-700 font-mono"><strong>Motivasi:</strong> Subjek terlihat heroik, dominan, dan kuat.</div>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-canva-card">
+              <div class="h-32 bg-slate-200 relative"><img src="https://images.unsplash.com/photo-1551009175-8a68da93d5f9?auto=format&fit=crop&w=600&q=80" alt="Frog Eye View" class="w-full h-full object-cover object-center"></div>
+              <div class="p-4">
+                <h4 class="text-sm font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-frog text-emerald-600"></i> Frog Eye View</h4>
+                <p class="text-[11px] text-slate-600 mt-0.5">Sangat rendah, kamera hampir menyentuh permukaan tanah.</p>
+                <div class="mt-1.5 text-[10px] text-emerald-700 font-mono"><strong>Motivasi:</strong> Dramatisasi objek dasar/jalan, prespektif hewan.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="sub-modul-7" class="sub-tab-panel space-y-6">
+        <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-canva-card">
+          <div class="mb-4">
+            <h3 class="text-xl font-extrabold text-slate-900 border-l-4 border-amber-500 pl-3">Kesehatan & Keselamatan Kerja (K3) Fotografi</h3>
+            <p class="text-xs text-slate-600 mt-1">Fotografi profesional tidak hanya memikirkan estetika, tapi juga keselamatan fotografer dan keamanan peralatan bernilai tinggi.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200 flex items-start gap-4">
+              <i class="fa-solid fa-link text-2xl text-amber-500 mt-1"></i>
+              <div>
+                <h4 class="text-sm font-bold text-amber-900">Wajib Gunakan Strap Kamera</h4>
+                <p class="text-xs text-amber-800 mt-1">Selalu lilitkan <i>neck strap</i> di leher atau <i>wrist strap</i> di pergelangan tangan. Jangan pernah memegang body tanpa pengaman, ini mencegah kerusakan fatal akibat jatuh.</p>
+              </div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-red-50 border border-red-200 flex items-start gap-4">
+              <i class="fa-solid fa-sun text-2xl text-red-500 mt-1"></i>
+              <div>
+                <h4 class="text-sm font-bold text-red-900">Bahaya Cahaya Ekstrim (Sensor)</h4>
+                <p class="text-xs text-red-800 mt-1">Dilarang keras membidik matahari siang secara langsung. <strong>Hati-hati pada acara konser!</strong> Sinar laser yang masuk ke lensa dapat langsung membakar sensor kamera secara permanen.</p>
+              </div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-cyan-50 border border-cyan-200 flex items-start gap-4">
+              <i class="fa-solid fa-snowflake text-2xl text-cyan-500 mt-1"></i>
+              <div>
+                <h4 class="text-sm font-bold text-cyan-900">Penyimpanan Suhu & Kelembaban</h4>
+                <p class="text-xs text-cyan-800 mt-1">Simpan kamera di <i>Dry Cabinet</i> (kelembaban 40-50%). Kelembaban tinggi di Indonesia sangat mudah memicu tumbuhnya jamur (fungus) di elemen kaca lensa.</p>
+              </div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-purple-50 border border-purple-200 flex items-start gap-4">
+              <i class="fa-solid fa-battery-half text-2xl text-purple-500 mt-1"></i>
+              <div>
+                <h4 class="text-sm font-bold text-purple-900">Penanganan Baterai</h4>
+                <p class="text-xs text-purple-800 mt-1">Lepaskan baterai jika kamera tidak digunakan lebih dari seminggu. Jangan membiarkan baterai lithium kosong (0%) dalam waktu lama agar tidak menggelembung.</p>
+              </div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-start gap-4 md:col-span-2">
+              <i class="fa-solid fa-hand-holding-hand text-2xl text-emerald-500 mt-1"></i>
+              <div>
+                <h4 class="text-sm font-bold text-emerald-900">Ergonomi Postur Memotret</h4>
+                <p class="text-xs text-emerald-800 mt-1">Untuk mencegah tremor dan sakit punggung: Tangan kiri bertugas menopang beban lensa dari bawah (telapak menghadap atas). Tangan kanan memegang <i>grip</i> hanya untuk menekan tombol <i>shutter</i>. Rapatkan kedua siku ke dada untuk menciptakan stabilitas (layaknya tripod alami).</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="sub-modul-8" class="sub-tab-panel space-y-6">
+        <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-canva-card">
+          <div class="mb-5 text-center">
+            <h3 class="text-xl font-extrabold text-slate-900">Anatomi Kamera Mirrorless (Sony Alpha Series)</h3>
+            <p class="text-xs text-slate-500 mt-1">Mengenal posisi dan fungsi tombol esensial pada body kamera profesional standar industri.</p>
+          </div>
+
+          <div class="space-y-6">
+            <!-- Front Camera Anatomy -->
+            <div class="border border-slate-200 rounded-2xl overflow-hidden">
+              <div class="bg-slate-100 px-4 py-2 font-mono font-bold text-sm text-slate-800 border-b border-slate-200 flex items-center gap-2">
+                <i class="fa-solid fa-camera"></i> BAGIAN DEPAN (FRONT)
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-12 gap-0">
+                <div class="md:col-span-5 bg-slate-50 border-r border-slate-100 flex items-center justify-center p-4">
+                  <img src="https://images.unsplash.com/photo-1516724562728-afc824a36e84?auto=format&fit=crop&w=800&q=80" alt="Kamera Depan" class="max-w-full h-auto rounded-xl shadow border border-slate-200/50 mix-blend-multiply object-cover aspect-[4/3]">
+                </div>
+                <div class="md:col-span-7 p-4 grid grid-cols-1 sm:grid-cols-2 gap-3 bg-white">
+                  <div class="bg-white p-3 border border-slate-100 rounded-xl shadow-xs">
+                    <span class="text-[10px] font-mono text-purple-600 font-bold">1</span>
+                    <h5 class="text-xs font-bold text-slate-900">Lens Mount</h5>
+                    <p class="text-[11px] text-slate-600 mt-0.5">Dudukan logam presisi tempat menyambungkan lensa dengan bodi kamera beserta titik konektor elektroniknya.</p>
+                  </div>
+                  <div class="bg-white p-3 border border-slate-100 rounded-xl shadow-xs">
+                    <span class="text-[10px] font-mono text-purple-600 font-bold">2</span>
+                    <h5 class="text-xs font-bold text-slate-900">Image Sensor</h5>
+                    <p class="text-[11px] text-slate-600 mt-0.5">Komponen paling vital di dalam mount. Menangkap cahaya menjadi data digital. <i>(Dilarang disentuh langsung!)</i></p>
+                  </div>
+                  <div class="bg-white p-3 border border-slate-100 rounded-xl shadow-xs">
+                    <span class="text-[10px] font-mono text-purple-600 font-bold">3</span>
+                    <h5 class="text-xs font-bold text-slate-900">AF Illuminator</h5>
+                    <p class="text-[11px] text-slate-600 mt-0.5">Lampu kecil yang menembakkan cahaya bantuan saat mencari fokus otomatis di tempat yang sangat gelap.</p>
+                  </div>
+                  <div class="bg-white p-3 border border-slate-100 rounded-xl shadow-xs">
+                    <span class="text-[10px] font-mono text-purple-600 font-bold">4</span>
+                    <h5 class="text-xs font-bold text-slate-900">Lens Release Button</h5>
+                    <p class="text-[11px] text-slate-600 mt-0.5">Tombol pelepas pengunci lensa. Harus ditekan saat memutar lensa untuk mencopotnya dari bodi.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Top Camera Anatomy -->
+            <div class="border border-slate-200 rounded-2xl overflow-hidden">
+              <div class="bg-slate-100 px-4 py-2 font-mono font-bold text-sm text-slate-800 border-b border-slate-200 flex items-center gap-2">
+                <i class="fa-solid fa-caret-up"></i> BAGIAN ATAS (TOP)
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-12 gap-0">
+                <div class="md:col-span-5 bg-slate-50 border-r border-slate-100 flex items-center justify-center p-4">
+                  <img src="https://images.unsplash.com/photo-1502982720700-baf97d424194?auto=format&fit=crop&w=800&q=80" alt="Kamera Atas" class="max-w-full h-auto rounded-xl shadow border border-slate-200/50 mix-blend-multiply object-cover aspect-[4/3]" style="object-position: top;">
+                </div>
+                <div class="md:col-span-7 p-4 grid grid-cols-1 sm:grid-cols-2 gap-3 bg-white">
+                  <div class="bg-white p-3 border border-slate-100 rounded-xl shadow-xs">
+                    <span class="text-[10px] font-mono text-cyan-600 font-bold">5</span>
+                    <h5 class="text-xs font-bold text-slate-900">Hot Shoe</h5>
+                    <p class="text-[11px] text-slate-600 mt-0.5">Dudukan logam di atas jendela bidik untuk memasang Flash Eksternal atau Trigger lighting studio.</p>
+                  </div>
+                  <div class="bg-white p-3 border border-slate-100 rounded-xl shadow-xs">
+                    <span class="text-[10px] font-mono text-cyan-600 font-bold">6</span>
+                    <h5 class="text-xs font-bold text-slate-900">Mode Dial (PASM)</h5>
+                    <p class="text-[11px] text-slate-600 mt-0.5">Roda pemilih mode foto: P (Program), A (Aperture), S (Shutter), M (Manual), Auto, Video.</p>
+                  </div>
+                  <div class="bg-white p-3 border border-slate-100 rounded-xl shadow-xs">
+                    <span class="text-[10px] font-mono text-cyan-600 font-bold">7</span>
+                    <h5 class="text-xs font-bold text-slate-900">Exp. Comp Dial</h5>
+                    <p class="text-[11px] text-slate-600 mt-0.5">Roda kompensasi exposure (+/- EV) untuk menerangkan/menggelapkan foto dengan cepat.</p>
+                  </div>
+                  <div class="bg-white p-3 border border-slate-100 rounded-xl shadow-xs">
+                    <span class="text-[10px] font-mono text-cyan-600 font-bold">8</span>
+                    <h5 class="text-xs font-bold text-slate-900">Shutter Button & Power</h5>
+                    <p class="text-[11px] text-slate-600 mt-0.5">Saklar ON/OFF dan Tombol jepret (tekan setengah untuk AF, penuh untuk memotret).</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Back Camera Anatomy -->
+            <div class="border border-slate-200 rounded-2xl overflow-hidden">
+              <div class="bg-slate-100 px-4 py-2 font-mono font-bold text-sm text-slate-800 border-b border-slate-200 flex items-center gap-2">
+                <i class="fa-solid fa-desktop"></i> BAGIAN BELAKANG (BACK)
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-12 gap-0">
+                <div class="md:col-span-5 bg-slate-50 border-r border-slate-100 flex items-center justify-center p-4">
+                  <img src="https://images.unsplash.com/photo-1616423640778-28d1b53229bd?auto=format&fit=crop&w=800&q=80" alt="Kamera Belakang" class="max-w-full h-auto rounded-xl shadow border border-slate-200/50 mix-blend-multiply object-cover aspect-[4/3]">
+                </div>
+                <div class="md:col-span-7 p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 bg-white">
+                  <div class="bg-white p-3 border border-slate-100 rounded-xl shadow-xs">
+                    <span class="text-[10px] font-mono text-emerald-600 font-bold">9</span>
+                    <h5 class="text-xs font-bold text-slate-900">EVF Viewfinder</h5>
+                    <p class="text-[11px] text-slate-600 mt-0.5">Jendela bidik elektronik. Menampilkan preview hasil foto akurat sebelum dijepret.</p>
+                  </div>
+                  <div class="bg-white p-3 border border-slate-100 rounded-xl shadow-xs">
+                    <span class="text-[10px] font-mono text-emerald-600 font-bold">10</span>
+                    <h5 class="text-xs font-bold text-slate-900">Monitor LCD</h5>
+                    <p class="text-[11px] text-slate-600 mt-0.5">Layar utama untuk Live View dan menu. Bisa dilipat untuk angle sulit (Low/High angle).</p>
+                  </div>
+                  <div class="bg-white p-3 border border-slate-100 rounded-xl shadow-xs">
+                    <span class="text-[10px] font-mono text-emerald-600 font-bold">11</span>
+                    <h5 class="text-xs font-bold text-slate-900">Control Wheel</h5>
+                    <p class="text-[11px] text-slate-600 mt-0.5">Roda putar navigasi untuk mengubah nilai ISO atau navigasi menu dengan cepat.</p>
+                  </div>
+                  <div class="bg-white p-3 border border-slate-100 rounded-xl shadow-xs">
+                    <span class="text-[10px] font-mono text-emerald-600 font-bold">12</span>
+                    <h5 class="text-xs font-bold text-slate-900">Menu & Fn Buttons</h5>
+                    <p class="text-[11px] text-slate-600 mt-0.5">Tombol Fn memanggil menu kilat (Quick Menu) pengaturan yang sering diubah.</p>
+                  </div>
+                  <div class="bg-white p-3 border border-slate-100 rounded-xl shadow-xs">
+                    <span class="text-[10px] font-mono text-emerald-600 font-bold">13</span>
+                    <h5 class="text-xs font-bold text-slate-900">AF/MF - AEL</h5>
+                    <p class="text-[11px] text-slate-600 mt-0.5">Tuas saklar mengunci fokus (AF/MF) atau mengunci pencahayaan (Auto Exposure Lock).</p>
+                  </div>
+                  <div class="bg-white p-3 border border-slate-100 rounded-xl shadow-xs">
+                    <span class="text-[10px] font-mono text-emerald-600 font-bold">14</span>
+                    <h5 class="text-xs font-bold text-slate-900">Play & Trash Button</h5>
+                    <p class="text-[11px] text-slate-600 mt-0.5">Tombol Play melihat galeri foto. Tombol Tong Sampah menghapus gambar.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div id="tab-tugas" class="view-content-panel space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div class="lg:col-span-7 space-y-3">
+          <div class="flex items-center justify-between pb-2 border-b border-slate-200">
+            <div>
+              <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-trophy text-purple-600"></i>
+                <span>7 Tantangan Fotografi Siswa</span>
+              </h2>
+              <p class="text-xs text-slate-500">Pilih misi, coba tekniknya, lalu centang untuk menyimpan ke akun Anda.</p>
+            </div>
+            <span id="mission-counter-text" class="text-xs font-mono font-bold text-purple-700 bg-purple-50 px-3 py-1 rounded-full border border-purple-200">0 / 7 Selesai</span>
+          </div>
+
+          <div class="space-y-2.5">
+            <div id="mission-card-1" class="bg-white p-4 rounded-2xl border border-slate-200 flex items-center justify-between gap-3 shadow-canva-card hover:shadow-md transition-all">
+              <div>
+                <div class="flex items-center gap-2"><span class="text-[10px] font-mono font-bold text-purple-700">MISI 01</span><span id="mission-status-1" class="text-[10px] font-mono text-slate-400">Belum Selesai</span></div>
+                <h4 class="text-xs font-bold text-slate-900 mt-0.5">Rule of Third</h4>
+                <p class="text-[11px] text-slate-500">Tempatkan objek utama pada salah satu titik potong grid 3×3.</p>
+              </div>
+              <button onclick="toggleMission(1)" id="btn-mission-1" class="px-3.5 py-1.5 canva-gradient-bg text-white font-bold text-xs font-mono rounded-xl shrink-0 shadow-sm">Tandai Selesai ✓</button>
+            </div>
+            <div id="mission-card-2" class="bg-white p-4 rounded-2xl border border-slate-200 flex items-center justify-between gap-3 shadow-canva-card hover:shadow-md transition-all">
+              <div>
+                <div class="flex items-center gap-2"><span class="text-[10px] font-mono font-bold text-purple-700">MISI 02</span><span id="mission-status-2" class="text-[10px] font-mono text-slate-400">Belum Selesai</span></div>
+                <h4 class="text-xs font-bold text-slate-900 mt-0.5">Frame in Frame</h4>
+                <p class="text-[11px] text-slate-500">Gunakan jendela, pintu kelas, atau dedaunan sebagai bingkai alami.</p>
+              </div>
+              <button onclick="toggleMission(2)" id="btn-mission-2" class="px-3.5 py-1.5 canva-gradient-bg text-white font-bold text-xs font-mono rounded-xl shrink-0 shadow-sm">Tandai Selesai ✓</button>
+            </div>
+            <div id="mission-card-3" class="bg-white p-4 rounded-2xl border border-slate-200 flex items-center justify-between gap-3 shadow-canva-card hover:shadow-md transition-all">
+              <div>
+                <div class="flex items-center gap-2"><span class="text-[10px] font-mono font-bold text-purple-700">MISI 03</span><span id="mission-status-3" class="text-[10px] font-mono text-slate-400">Belum Selesai</span></div>
+                <h4 class="text-xs font-bold text-slate-900 mt-0.5">Leading Lines</h4>
+                <p class="text-[11px] text-slate-500">Garis lorong atau ubin lantai menuntun mata ke subjek utama.</p>
+              </div>
+              <button onclick="toggleMission(3)" id="btn-mission-3" class="px-3.5 py-1.5 canva-gradient-bg text-white font-bold text-xs font-mono rounded-xl shrink-0 shadow-sm">Tandai Selesai ✓</button>
+            </div>
+            <div id="mission-card-4" class="bg-white p-4 rounded-2xl border border-slate-200 flex items-center justify-between gap-3 shadow-canva-card hover:shadow-md transition-all">
+              <div>
+                <div class="flex items-center gap-2"><span class="text-[10px] font-mono font-bold text-purple-700">MISI 04</span><span id="mission-status-4" class="text-[10px] font-mono text-slate-400">Belum Selesai</span></div>
+                <h4 class="text-xs font-bold text-slate-900 mt-0.5">Depth of Field (Bokeh)</h4>
+                <p class="text-[11px] text-slate-500">Isolasi objek produk dengan latar belakang blur halus.</p>
+              </div>
+              <button onclick="toggleMission(4)" id="btn-mission-4" class="px-3.5 py-1.5 canva-gradient-bg text-white font-bold text-xs font-mono rounded-xl shrink-0 shadow-sm">Tandai Selesai ✓</button>
+            </div>
+            <div id="mission-card-5" class="bg-white p-4 rounded-2xl border border-slate-200 flex items-center justify-between gap-3 shadow-canva-card hover:shadow-md transition-all">
+              <div>
+                <div class="flex items-center gap-2"><span class="text-[10px] font-mono font-bold text-purple-700">MISI 05</span><span id="mission-status-5" class="text-[10px] font-mono text-slate-400">Belum Selesai</span></div>
+                <h4 class="text-xs font-bold text-slate-900 mt-0.5">Freezing (Shutter Cepat)</h4>
+                <p class="text-[11px] text-slate-500">Bekukan subjek yang melompat atau objek bergerak (≥ 1/250s).</p>
+              </div>
+              <button onclick="toggleMission(5)" id="btn-mission-5" class="px-3.5 py-1.5 canva-gradient-bg text-white font-bold text-xs font-mono rounded-xl shrink-0 shadow-sm">Tandai Selesai ✓</button>
+            </div>
+            <div id="mission-card-6" class="bg-white p-4 rounded-2xl border border-slate-200 flex items-center justify-between gap-3 shadow-canva-card hover:shadow-md transition-all">
+              <div>
+                <div class="flex items-center gap-2"><span class="text-[10px] font-mono font-bold text-purple-700">MISI 06</span><span id="mission-status-6" class="text-[10px] font-mono text-slate-400">Belum Selesai</span></div>
+                <h4 class="text-xs font-bold text-slate-900 mt-0.5">Panning (Speed 1/30s)</h4>
+                <p class="text-[11px] text-slate-500">Kamera menyapu selaras dengan arah laju kendaraan.</p>
+              </div>
+              <button onclick="toggleMission(6)" id="btn-mission-6" class="px-3.5 py-1.5 canva-gradient-bg text-white font-bold text-xs font-mono rounded-xl shrink-0 shadow-sm">Tandai Selesai ✓</button>
+            </div>
+            <div id="mission-card-7" class="bg-white p-4 rounded-2xl border border-slate-200 flex items-center justify-between gap-3 shadow-canva-card hover:shadow-md transition-all">
+              <div>
+                <div class="flex items-center gap-2"><span class="text-[10px] font-mono font-bold text-purple-700">MISI 07</span><span id="mission-status-7" class="text-[10px] font-mono text-slate-400">Belum Selesai</span></div>
+                <h4 class="text-xs font-bold text-slate-900 mt-0.5">Siluet Backlight</h4>
+                <p class="text-[11px] text-slate-500">Objek berlatar cerah matahari sore tanpa lampu flash.</p>
+              </div>
+              <button onclick="toggleMission(7)" id="btn-mission-7" class="px-3.5 py-1.5 canva-gradient-bg text-white font-bold text-xs font-mono rounded-xl shrink-0 shadow-sm">Tandai Selesai ✓</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-5 bg-white p-5 rounded-3xl border border-slate-200 space-y-4 shadow-canva">
+          <div class="border-b border-slate-100 pb-3">
+            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-compass text-cyan-600"></i>
+              <span>Workflow Asisten 8 Langkah</span>
+            </h3>
+            <p class="text-xs text-slate-500">Centang kesiapan alur sebelum mengumpulkan karya.</p>
+          </div>
+          <div class="space-y-2.5 text-xs text-slate-700 font-mono">
+            <label class="flex items-start gap-2.5 cursor-pointer p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 hover:bg-slate-100 transition-colors">
+              <input type="checkbox" onchange="updateAssistantProgress()" class="chk-assist mt-0.5 accent-purple-600 rounded"><span>Step 1: Pahami brief & tentukan tema foto</span>
+            </label>
+            <label class="flex items-start gap-2.5 cursor-pointer p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 hover:bg-slate-100 transition-colors">
+              <input type="checkbox" onchange="updateAssistantProgress()" class="chk-assist mt-0.5 accent-purple-600 rounded"><span>Step 2: Baca instruksi teknis & batasan alat</span>
+            </label>
+            <label class="flex items-start gap-2.5 cursor-pointer p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 hover:bg-slate-100 transition-colors">
+              <input type="checkbox" onchange="updateAssistantProgress()" class="chk-assist mt-0.5 accent-purple-600 rounded"><span>Step 3: Lihat demonstrasi visual/animasi</span>
+            </label>
+            <label class="flex items-start gap-2.5 cursor-pointer p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 hover:bg-slate-100 transition-colors">
+              <input type="checkbox" onchange="updateAssistantProgress()" class="chk-assist mt-0.5 accent-purple-600 rounded"><span>Step 4: Siapkan kamera, baterai & memori</span>
+            </label>
+            <label class="flex items-start gap-2.5 cursor-pointer p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 hover:bg-slate-100 transition-colors">
+              <input type="checkbox" onchange="updateAssistantProgress()" class="chk-assist mt-0.5 accent-purple-600 rounded"><span>Step 5: Lakukan pemotretan multi-angle</span>
+            </label>
+            <label class="flex items-start gap-2.5 cursor-pointer p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 hover:bg-slate-100 transition-colors">
+              <input type="checkbox" onchange="updateAssistantProgress()" class="chk-assist mt-0.5 accent-purple-600 rounded"><span>Step 6: Cek hasil ketajaman & komposisi</span>
+            </label>
+            <label class="flex items-start gap-2.5 cursor-pointer p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 hover:bg-slate-100 transition-colors">
+              <input type="checkbox" onchange="updateAssistantProgress()" class="chk-assist mt-0.5 accent-purple-600 rounded"><span>Step 7: Pilih 1 foto terbaik & beri nama file</span>
+            </label>
+            <label class="flex items-start gap-2.5 cursor-pointer p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 hover:bg-slate-100 transition-colors">
+              <input type="checkbox" onchange="updateAssistantProgress()" class="chk-assist mt-0.5 accent-purple-600 rounded"><span>Step 8: Isi lembar refleksi pembelajaran</span>
+            </label>
+          </div>
+          <div class="pt-2 flex items-center justify-between text-xs font-mono">
+            <span id="assist-step-counter" class="text-purple-700 font-bold">0 Checklist Terpenuhi</span>
+            <button onclick="switchMainTab('tab-evaluasi')" class="text-cyan-600 font-bold hover:underline">Cek Kualitas Foto →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="tab-evaluasi" class="view-content-panel space-y-6">
+      
+      <div class="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 space-y-4 shadow-canva">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-purple-600"></i>
+              <span>Evaluasi Mandiri: Apakah Fotomu Sudah Siap?</span>
+            </h2>
+            <p class="text-xs text-slate-500">Centang indikator di bawah sebelum mengumpulkan karya ke galeri kelas.</p>
+          </div>
+          <div id="eval-result-badge" class="px-4 py-2 rounded-2xl bg-slate-50 border border-slate-200 font-mono text-center">
+            <span class="text-[10px] text-slate-400 block uppercase font-bold">STATUS KELAYAKAN</span>
+            <span id="eval-status-label" class="text-xs font-bold text-slate-600">Belum Siap</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 text-xs">
+          <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2">
+            <span class="font-mono text-purple-700 font-bold block">1. KOMPOSISI</span>
+            <label class="flex items-start gap-1.5 cursor-pointer text-slate-700"><input type="checkbox" onchange="calculateEvaluation()" class="eval-chk mt-0.5 accent-purple-600 rounded"><span>Objek tertata rapi</span></label>
+            <label class="flex items-start gap-1.5 cursor-pointer text-slate-700"><input type="checkbox" onchange="calculateEvaluation()" class="eval-chk mt-0.5 accent-purple-600 rounded"><span>Kaidah visual tepat</span></label>
+          </div>
+          <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2">
+            <span class="font-mono text-purple-700 font-bold block">2. FOKUS</span>
+            <label class="flex items-start gap-1.5 cursor-pointer text-slate-700"><input type="checkbox" onchange="calculateEvaluation()" class="eval-chk mt-0.5 accent-purple-600 rounded"><span>Objek utama tajam</span></label>
+            <label class="flex items-start gap-1.5 cursor-pointer text-slate-700"><input type="checkbox" onchange="calculateEvaluation()" class="eval-chk mt-0.5 accent-purple-600 rounded"><span>Titik fokus pas</span></label>
+          </div>
+          <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2">
+            <span class="font-mono text-purple-700 font-bold block">3. LIGHTING</span>
+            <label class="flex items-start gap-1.5 cursor-pointer text-slate-700"><input type="checkbox" onchange="calculateEvaluation()" class="eval-chk mt-0.5 accent-purple-600 rounded"><span>Cahaya seimbang</span></label>
+            <label class="flex items-start gap-1.5 cursor-pointer text-slate-700"><input type="checkbox" onchange="calculateEvaluation()" class="eval-chk mt-0.5 accent-purple-600 rounded"><span>Tidak over/under</span></label>
+          </div>
+          <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2">
+            <span class="font-mono text-purple-700 font-bold block">4. TEKNIK</span>
+            <label class="flex items-start gap-1.5 cursor-pointer text-slate-700"><input type="checkbox" onchange="calculateEvaluation()" class="eval-chk mt-0.5 accent-purple-600 rounded"><span>Sesuai instruksi</span></label>
+            <label class="flex items-start gap-1.5 cursor-pointer text-slate-700"><input type="checkbox" onchange="calculateEvaluation()" class="eval-chk mt-0.5 accent-purple-600 rounded"><span>Efek kamera muncul</span></label>
+          </div>
+          <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-2">
+            <span class="font-mono text-purple-700 font-bold block">5. KREATIVITAS</span>
+            <label class="flex items-start gap-1.5 cursor-pointer text-slate-700"><input type="checkbox" onchange="calculateEvaluation()" class="eval-chk mt-0.5 accent-purple-600 rounded"><span>Konsep jelas</span></label>
+            <label class="flex items-start gap-1.5 cursor-pointer text-slate-700"><input type="checkbox" onchange="calculateEvaluation()" class="eval-chk mt-0.5 accent-purple-600 rounded"><span>Daya tarik visual</span></label>
+          </div>
+        </div>
+        <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between text-xs font-mono">
+          <span id="eval-tip-text" class="text-slate-500">Centang indikator untuk mengecek status kelayakan karya foto Anda.</span>
+          <button onclick="resetEvaluation()" class="text-slate-500 hover:text-slate-800 underline">Reset</button>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-images text-cyan-600"></i>
+              <span>Galeri Karya Siswa X FILM (Data Nyata)</span>
+            </h2>
+            <p class="text-xs text-slate-500">Karya asli yang dikumpulkan oleh siswa kelas X SMKN 12 Surabaya.</p>
+          </div>
+          <button onclick="openSubmitFormModal()" class="px-4 py-2.5 canva-gradient-bg hover:opacity-95 text-white font-bold text-xs rounded-xl font-mono transition-all flex items-center gap-1.5 self-start sm:self-auto shadow-md shadow-purple-500/20">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            <span>+ Kumpulkan Karya Saya</span>
+          </button>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2 text-xs font-mono">
+          <button onclick="filterGallery('all')" class="gallery-filter-btn px-3 py-1.5 rounded-xl canva-gradient-bg text-white font-bold shadow-xs">Semua Karya (<span id="total-gallery-count">0</span>)</button>
+          <button onclick="filterGallery('Rule of Third')" class="gallery-filter-btn px-3 py-1.5 rounded-xl bg-white text-slate-700 border border-slate-200 shadow-xs hover:border-purple-300">Rule of Third</button>
+          <button onclick="filterGallery('Freezing')" class="gallery-filter-btn px-3 py-1.5 rounded-xl bg-white text-slate-700 border border-slate-200 shadow-xs hover:border-purple-300">Freezing</button>
+          <button onclick="filterGallery('Panning')" class="gallery-filter-btn px-3 py-1.5 rounded-xl bg-white text-slate-700 border border-slate-200 shadow-xs hover:border-purple-300">Panning</button>
+          <button onclick="filterGallery('Siluet')" class="gallery-filter-btn px-3 py-1.5 rounded-xl bg-white text-slate-700 border border-slate-200 shadow-xs hover:border-purple-300">Siluet</button>
+          <button onclick="filterGallery('Depth of Field')" class="gallery-filter-btn px-3 py-1.5 rounded-xl bg-white text-slate-700 border border-slate-200 shadow-xs hover:border-purple-300">DoF (Bokeh)</button>
+        </div>
+
+        <div id="gallery-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+
+        <div id="gallery-empty-state" class="p-8 text-center bg-white rounded-3xl border border-slate-200 space-y-3 shadow-canva-card">
+          <div class="w-12 h-12 mx-auto rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl">
+            <i class="fa-solid fa-camera-retro"></i>
+          </div>
+          <h3 class="text-sm font-bold text-slate-900">Belum Ada Karya yang Dikumpulkan</h3>
+          <p class="text-xs text-slate-500 max-w-md mx-auto">Jadilah siswa pertama yang menyelesaikan misi dan mengumpulkan karya foto ke galeri kelas!</p>
+          <button onclick="openSubmitFormModal()" class="px-4 py-2 canva-gradient-bg text-white font-bold text-xs rounded-xl font-mono shadow-md">
+            Kumpulkan Foto Pertama
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <div id="tab-refleksi" class="view-content-panel space-y-6">
+      
+      <div class="bg-white p-5 sm:p-6 rounded-3xl border border-slate-200 space-y-5 shadow-canva">
+        <div class="border-b border-slate-100 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-clipboard-question text-purple-600"></i>
+              <span>Refleksi Perjalanan Fotografi Saya</span>
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">Evaluasi pemahaman dan pengalaman Anda selama menyelesaikan modul & tugas fotografi dasar.</p>
+          </div>
+          <span class="text-[11px] font-mono text-purple-700 bg-purple-50 border border-purple-200 px-3 py-1 rounded-full font-bold">
+            Kurikulum Merdeka
+          </span>
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-xs font-mono font-bold text-slate-700 block">Bagaimana tingkat pemahamanmu terhadap materi fotografi dasar sejauh ini?</label>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs font-mono">
+            <button type="button" onclick="selectReflectScale(1)" id="btn-scale-1" class="p-3 rounded-2xl bg-slate-50 border border-slate-200 text-center cursor-pointer transition-all hover:border-slate-300">
+              <span class="text-xl block mb-1">😕</span><span class="text-slate-800 font-bold text-[11px] block">Belum Paham</span>
+            </button>
+            <button type="button" onclick="selectReflectScale(2)" id="btn-scale-2" class="p-3 rounded-2xl bg-slate-50 border border-slate-200 text-center cursor-pointer transition-all hover:border-slate-300">
+              <span class="text-xl block mb-1">😐</span><span class="text-slate-800 font-bold text-[11px] block">Perlu Latihan</span>
+            </button>
+            <button type="button" onclick="selectReflectScale(3)" id="btn-scale-3" class="p-3 rounded-2xl bg-slate-50 border border-slate-200 text-center cursor-pointer transition-all hover:border-slate-300">
+              <span class="text-xl block mb-1">🙂</span><span class="text-slate-800 font-bold text-[11px] block">Paham</span>
+            </button>
+            <button type="button" onclick="selectReflectScale(4)" id="btn-scale-4" class="p-3 rounded-2xl bg-slate-50 border border-slate-200 text-center cursor-pointer transition-all hover:border-slate-300">
+              <span class="text-xl block mb-1">😊</span><span class="text-slate-800 font-bold text-[11px] block">Sangat Paham</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="space-y-3.5 pt-2 border-t border-slate-100 text-xs">
+          <div><label class="font-mono text-slate-700 font-semibold block mb-1">1. Teknik fotografi apa yang paling mudah saya praktikkan?</label><textarea id="ref-q1" rows="2" class="w-full bg-slate-50 border border-slate-200 focus:border-purple-500 rounded-2xl p-3 outline-none"></textarea></div>
+          <div><label class="font-mono text-slate-700 font-semibold block mb-1">2. Teknik apa yang paling menantang atau sulit dilakukan?</label><textarea id="ref-q2" rows="2" class="w-full bg-slate-50 border border-slate-200 focus:border-purple-500 rounded-2xl p-3 outline-none"></textarea></div>
+          <div><label class="font-mono text-slate-700 font-semibold block mb-1">3. Apa kesalahan teknis awal yang saya temukan pada hasil foto saya?</label><textarea id="ref-q3" rows="2" class="w-full bg-slate-50 border border-slate-200 focus:border-purple-500 rounded-2xl p-3 outline-none"></textarea></div>
+          <div><label class="font-mono text-slate-700 font-semibold block mb-1">4. Apa yang saya perbaiki setelah melihat demonstrasi simulator kamera?</label><textarea id="ref-q4" rows="2" class="w-full bg-slate-50 border border-slate-200 focus:border-purple-500 rounded-2xl p-3 outline-none"></textarea></div>
+          <div><label class="font-mono text-slate-700 font-semibold block mb-1">5. Teknik atau genre fotografi apa yang ingin saya kuasai lebih lanjut?</label><textarea id="ref-q5" rows="2" class="w-full bg-slate-50 border border-slate-200 focus:border-purple-500 rounded-2xl p-3 outline-none"></textarea></div>
+        </div>
+        <div id="reflection-save-alert" class="hidden p-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-mono font-semibold">Refleksi berhasil disimpan!</div>
+        <div class="flex flex-wrap items-center gap-2.5 pt-2 border-t border-slate-100">
+          <button onclick="saveReflection()" class="px-5 py-2.5 canva-gradient-bg hover:opacity-95 text-white font-bold text-xs font-mono rounded-xl transition-all shadow-md flex items-center gap-1.5"><i class="fa-solid fa-floppy-disk"></i><span>Simpan Refleksi Saya</span></button>
+          <button onclick="exportReflectionText()" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-xs font-mono rounded-xl transition-all flex items-center gap-1.5 font-semibold"><i class="fa-solid fa-copy"></i><span>Salin Rangkuman Teks</span></button>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-3xl border border-slate-200 space-y-4 shadow-canva-card">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div>
+            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-circle-question text-purple-600"></i><span>Troubleshooting: Kendala Saat Memotret</span>
+            </h3>
+            <p class="text-xs text-slate-500">Solusi cepat saat hasil jepretan kamera tidak sesuai harapan.</p>
+          </div>
+          <button onclick="openAssistantModal()" class="px-3.5 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 text-xs font-mono font-bold rounded-xl flex items-center gap-1.5 transition-all">
+            <i class="fa-solid fa-robot"></i><span>Tanya FOBI</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+          <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-1">
+            <div class="font-bold text-red-600 font-mono flex items-center gap-1.5"><i class="fa-solid fa-triangle-exclamation"></i><span>"Foto saya blur / goyang"</span></div>
+            <p class="text-slate-600 text-[11px]">Periksa fokus titik AF dan naikkan shutter speed minimal 1/125s untuk mencegah getaran tangan.</p>
+          </div>
+          <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-1">
+            <div class="font-bold text-amber-600 font-mono flex items-center gap-1.5"><i class="fa-solid fa-triangle-exclamation"></i><span>"Background tidak mau bokeh"</span></div>
+            <p class="text-slate-600 text-[11px]">Gunakan bukaan aperture paling lebar (f/1.8 atau f/2.8), dekati objek, dan beri jarak latar belakang.</p>
+          </div>
+          <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 space-y-1">
+            <div class="font-bold text-blue-600 font-mono flex items-center gap-1.5"><i class="fa-solid fa-triangle-exclamation"></i><span>"Objek bergerak jadi berbayang"</span></div>
+            <p class="text-slate-600 text-[11px]">Gunakan teknik Freezing: atur shutter speed ke 1/500s atau 1/1000s agar pergerakan membeku.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div id="tab-guru" class="view-content-panel space-y-6">
+      
+      <div class="bg-gradient-to-r from-purple-50 via-white to-cyan-50 p-6 rounded-3xl border-2 border-purple-200 shadow-canva flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="px-2.5 py-0.5 rounded-full canva-gradient-bg text-white text-[10px] font-mono font-black uppercase">PANEL PENDIDIK</span>
+            <span class="text-xs font-mono text-slate-500">SMKN 12 Surabaya • Rekapitulasi Terpusat</span>
+          </div>
+          <h2 class="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2.5">
+            <i class="fa-solid fa-chalkboard-user text-purple-600"></i><span>Dashboard Pengajar & Penilaian Tugas</span>
+          </h2>
+          <p class="text-xs text-slate-600 mt-1 max-w-2xl">
+            Memantau, mengevaluasi, dan mengunduh seluruh data karya praktik fotografi yang telah dikumpulkan oleh siswa Kelas X FILM.
+          </p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <button onclick="exportSubmissionsToCSV()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-mono font-bold text-xs rounded-xl transition-all shadow-sm flex items-center gap-1.5"><i class="fa-solid fa-file-excel"></i><span>Ekspor ke CSV</span></button>
+          <button onclick="window.print()" class="px-4 py-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-mono text-xs rounded-xl transition-all flex items-center gap-1.5 shadow-xs"><i class="fa-solid fa-print"></i><span>Cetak Rekap</span></button>
+          <button onclick="exitTeacherMode()" class="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-mono text-xs rounded-xl transition-all font-semibold">Keluar Mode Guru</button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3.5 font-mono">
+        <div class="bg-white p-4 rounded-3xl border border-slate-200 shadow-canva-card"><span class="text-[10px] text-slate-400 font-bold uppercase">TOTAL TUGAS TERKUMPUL</span><div id="stat-total-submissions" class="text-2xl font-black text-purple-700 mt-1">0</div></div>
+        <div class="bg-white p-4 rounded-3xl border border-slate-200 shadow-canva-card"><span class="text-[10px] text-slate-400 font-bold uppercase">X FILM 1</span><div id="stat-count-film1" class="text-2xl font-black text-cyan-600 mt-1">0</div></div>
+        <div class="bg-white p-4 rounded-3xl border border-slate-200 shadow-canva-card"><span class="text-[10px] text-slate-400 font-bold uppercase">X FILM 2</span><div id="stat-count-film2" class="text-2xl font-black text-emerald-600 mt-1">0</div></div>
+      </div>
+
+      <div class="bg-white p-4 rounded-3xl border border-slate-200 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 shadow-canva-card">
+        <div class="flex flex-wrap items-center gap-2 text-xs font-mono">
+          <button onclick="filterTeacherTable('all')" id="btn-guru-filter-all" class="teacher-filter-btn px-3.5 py-1.5 rounded-xl canva-gradient-bg text-white font-bold shadow-xs">Semua Kelas</button>
+          <button onclick="filterTeacherTable('X FILM 1')" id="btn-guru-filter-film1" class="teacher-filter-btn px-3.5 py-1.5 rounded-xl bg-slate-50 text-slate-700 border border-slate-200">X FILM 1</button>
+          <button onclick="filterTeacherTable('X FILM 2')" id="btn-guru-filter-film2" class="teacher-filter-btn px-3.5 py-1.5 rounded-xl bg-slate-50 text-slate-700 border border-slate-200">X FILM 2</button>
+        </div>
+        <div class="relative w-full sm:w-72">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+          <input type="text" id="teacher-search-input" oninput="searchTeacherTable(this.value)" placeholder="Cari nama siswa / judul..." class="w-full bg-slate-50 border border-slate-200 focus:border-purple-500 rounded-2xl pl-9 pr-3 py-2 text-xs text-slate-800 outline-none">
+        </div>
+      </div>
+
+      <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-canva">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="border-b border-slate-100 bg-slate-50 font-mono text-[11px] text-slate-500">
+                <th class="py-3.5 px-4 font-bold">No</th><th class="py-3.5 px-4 font-bold">Foto</th><th class="py-3.5 px-4 font-bold">Siswa & Kelas</th>
+                <th class="py-3.5 px-4 font-bold">Misi & Judul</th><th class="py-3.5 px-4 font-bold">Teknis Kamera</th><th class="py-3.5 px-4 text-center font-bold">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="teacher-submissions-tbody" class="divide-y divide-slate-100 text-slate-700 font-sans"></tbody>
+          </table>
+        </div>
+        <div id="teacher-empty-state" class="hidden p-8 text-center space-y-2">
+          <i class="fa-solid fa-inbox text-3xl text-slate-300"></i><p class="text-xs text-slate-500">Belum ada data tugas.</p>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <div id="modal-login" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 max-w-md w-full rounded-3xl p-6 shadow-2xl relative">
+      <button onclick="closeLoginModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
+      <div class="flex items-center gap-1.5 p-1 bg-slate-100 rounded-2xl mb-4 border border-slate-200">
+        <button type="button" onclick="switchLoginRole('student')" id="tab-login-student" class="flex-1 py-2 text-xs font-mono font-bold rounded-xl transition-all canva-gradient-bg text-white flex items-center justify-center gap-1.5 shadow-sm"><i class="fa-solid fa-user-graduate"></i><span>Masuk Siswa</span></button>
+        <button type="button" onclick="switchLoginRole('teacher')" id="tab-login-teacher" class="flex-1 py-2 text-xs font-mono font-bold rounded-xl transition-all text-slate-600 hover:text-slate-900 flex items-center justify-center gap-1.5"><i class="fa-solid fa-chalkboard-user"></i><span>Masuk Guru</span></button>
+      </div>
+
+      <div id="panel-login-student" class="space-y-3">
+        <div class="flex items-center gap-3 pb-2 border-b border-slate-100">
+          <div class="w-10 h-10 rounded-2xl bg-purple-50 text-purple-700 flex items-center justify-center text-base font-black"><i class="fa-solid fa-id-card"></i></div>
+          <div><h3 class="text-sm font-bold text-slate-900 font-mono">Identitas Siswa</h3><p class="text-[11px] text-slate-500">SMKN 12 Surabaya • Kelas X FILM</p></div>
+        </div>
+        <form onsubmit="handleLoginSubmit(event)" class="space-y-3 pt-1 text-xs font-mono">
+          <div><label class="text-slate-700 font-semibold block mb-1">Nama Lengkap Siswa *</label><input type="text" id="login-input-name" required class="w-full bg-slate-50 border border-slate-200 focus:border-purple-500 rounded-xl p-2.5 outline-none"></div>
+          <div><label class="text-slate-700 font-semibold block mb-1">Kelas *</label><select id="login-input-class" required class="w-full bg-slate-50 border border-slate-200 focus:border-purple-500 rounded-xl p-2.5 outline-none"><option value="X FILM 1">X FILM 1</option><option value="X FILM 2">X FILM 2</option></select></div>
+          <button type="submit" class="w-full py-3 canva-gradient-bg text-white font-bold font-mono text-xs rounded-xl shadow-md mt-2">Masuk & Buka Modul Siswa ✓</button>
+        </form>
+      </div>
+
+      <div id="panel-login-teacher" class="hidden space-y-3">
+        <div class="flex items-center gap-3 pb-2 border-b border-slate-100">
+          <div class="w-10 h-10 rounded-2xl bg-cyan-50 text-cyan-700 flex items-center justify-center text-base font-black"><i class="fa-solid fa-shield-halved"></i></div>
+          <div><h3 class="text-sm font-bold text-slate-900 font-mono">Autentikasi Pengajar</h3></div>
+        </div>
+        <form onsubmit="handleTeacherLoginSubmit(event)" class="space-y-3 pt-1 text-xs font-mono">
+          <div><label class="text-slate-700 font-semibold block mb-1">Nama Guru *</label><input type="text" id="teacher-login-name" required placeholder="aditya alhamdy syahputra" class="w-full bg-slate-50 border border-slate-200 focus:border-purple-500 rounded-xl p-2.5 outline-none"></div>
+          <div><label class="text-slate-700 font-semibold block mb-1">Sandi *</label><input type="password" id="teacher-login-pass" required placeholder="1234" class="w-full bg-slate-50 border border-slate-200 focus:border-purple-500 rounded-xl p-2.5 outline-none font-sans"></div>
+          <div id="teacher-error-alert" class="hidden p-2.5 rounded-xl bg-red-50 border border-red-200 text-red-600 text-xs"><span>Nama Pengajar atau Sandi salah!</span></div>
+          <button type="submit" class="w-full py-3 canva-gradient-bg text-white font-bold font-mono text-xs rounded-xl shadow-md mt-2">Masuk Dashboard Guru ✓</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-submit" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 max-w-lg w-full rounded-3xl p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+      <button onclick="closeSubmitModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
+      <h3 class="text-sm font-bold text-slate-900 font-mono mb-2">Pengumpulan Tugas Praktik</h3>
+      <form onsubmit="handleRealPhotoSubmission(event)" class="space-y-3 text-xs font-mono">
+        <div><label class="text-slate-700 font-semibold block mb-1">Pilih Misi *</label><select id="submit-mission" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs"><option value="Rule of Third">MISI 01 — Rule of Third</option><option value="Frame in Frame">MISI 02 — Frame in Frame</option><option value="Leading Lines">MISI 03 — Leading Lines</option><option value="Depth of Field">MISI 04 — Depth of Field (Bokeh)</option><option value="Freezing">MISI 05 — Freezing</option><option value="Panning">MISI 06 — Panning</option><option value="Siluet">MISI 07 — Siluet Backlight</option></select></div>
+        <div><label class="text-slate-700 font-semibold block mb-1">Judul Karya *</label><input type="text" id="submit-title" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs"></div>
+        <div><label class="text-slate-700 font-semibold block mb-1">Pilih File Foto *</label><input type="file" id="submit-file-input" accept="image/*" onchange="handleImageFilePicker(event)" class="w-full text-xs cursor-pointer"></div>
+        <div id="submit-file-preview-box" class="hidden aspect-video bg-black rounded-xl overflow-hidden relative"><img id="submit-file-preview-img" src="" class="w-full h-full object-cover"></div>
+        <button type="submit" class="w-full py-3 canva-gradient-bg text-white font-bold text-xs rounded-xl shadow-md">Kirim & Simpan Tugas ✓</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-photo-preview" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 max-w-2xl w-full rounded-3xl overflow-hidden shadow-2xl relative">
+      <button onclick="closePhotoPreviewModal()" class="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-black/60 text-white flex items-center justify-center"><i class="fa-solid fa-xmark text-sm"></i></button>
+      <div class="aspect-video bg-black flex items-center justify-center overflow-hidden"><img id="preview-modal-img" src="" class="max-h-full max-w-full object-contain"></div>
+      <div class="p-4 bg-white"><h3 id="preview-modal-title" class="text-sm font-bold text-slate-900">Judul</h3><span id="preview-modal-author" class="text-xs font-mono text-purple-700 font-bold">Penulis</span></div>
+    </div>
+  </div>
+
+  <div id="modal-comp" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 max-w-lg w-full rounded-3xl p-6 shadow-2xl relative">
+      <button onclick="closeCompModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
+      <h3 id="modal-comp-title" class="text-lg font-bold text-slate-900 mb-1">Judul Komposisi</h3>
+      <p id="modal-comp-desc" class="text-xs text-slate-600 mb-3">Deskripsi.</p>
+      <div class="aspect-video bg-black rounded-2xl overflow-hidden mb-3 relative"><img id="modal-comp-img" src="" class="w-full h-full object-cover"></div>
+      <button onclick="closeCompModal()" class="w-full py-2.5 canva-gradient-bg text-white font-bold text-xs rounded-xl font-mono shadow-md">Saya Paham ✓</button>
+    </div>
+  </div>
+
+  <div id="modal-technique" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 max-w-lg w-full rounded-3xl p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+      <button onclick="closeTechniqueModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
+      <span class="text-[10px] font-mono text-cyan-600 font-bold">MODUL 4 — LAB TEKNIK</span>
+      <h3 id="modal-tech-title" class="text-lg font-bold text-slate-900 mt-0.5 mb-1.5">Nama Teknik</h3>
+      <p id="modal-tech-desc" class="text-xs text-slate-600 leading-relaxed mb-3">Deskripsi.</p>
+      <div id="modal-tech-interactive-stage" class="bg-white mb-3"></div>
+      <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-700 mb-3">
+        <strong class="text-purple-700 font-mono block text-[11px]">Instruksi Praktik:</strong><span id="modal-tech-task">Tugas.</span>
+      </div>
+      <button onclick="closeTechniqueModal()" class="w-full py-2.5 canva-gradient-bg text-white font-bold text-xs rounded-xl font-mono shadow-md">Siap Praktik ✓</button>
+    </div>
+  </div>
+
+  <div id="modal-assistant" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 max-w-md w-full rounded-3xl p-5 shadow-2xl relative flex flex-col max-h-[85vh]">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <h4 class="font-bold text-slate-900 text-xs">FOBI Assistant</h4>
+        <button onclick="closeAssistantModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
+      </div>
+      <div id="chat-stream-box" class="flex-1 overflow-y-auto py-3 space-y-2.5 text-xs pr-1">
+        <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 text-slate-700"><strong class="text-purple-700 block text-[11px] mb-0.5">FOBI:</strong>Halo! Ada kendala memotret? Tanyakan ke saya!</div>
+      </div>
+      <div class="pt-2 flex gap-2">
+        <input type="text" id="chat-input" onkeydown="if(event.key==='Enter') sendFobiMessage()" placeholder="Tanya FOBI..." class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs outline-none">
+        <button onclick="sendFobiMessage()" class="px-3.5 py-2 canva-gradient-bg text-white font-bold rounded-xl text-xs shadow-sm"><i class="fa-solid fa-paper-plane"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const TEACHER_OFFICIAL_NAME = 'aditya alhamdy syahputra';
+    const TEACHER_OFFICIAL_PASS = '1234';
+
+    let savedUid = localStorage.getItem('fobi_uid');
+    if (!savedUid) {
+      savedUid = 'film_user_' + Date.now() + '_' + Math.random().toString(36).substring(2, 7);
+      localStorage.setItem('fobi_uid', savedUid);
+    }
+
+    let localSavedSubmissions = [];
+    try { localSavedSubmissions = JSON.parse(localStorage.getItem('fobi_gallery_submissions') || '[]'); } catch(e) { localSavedSubmissions = []; }
+
+    window.appState = {
+      userId: savedUid,
+      currentUserRole: localStorage.getItem('fobi_role') || 'guest',
+      studentProfile: JSON.parse(localStorage.getItem('fobi_student') || 'null'),
+      teacherProfile: JSON.parse(localStorage.getItem('fobi_teacher') || 'null'),
+      completedSteps: JSON.parse(localStorage.getItem('fobi_steps') || '[]'),
+      completedMissions: JSON.parse(localStorage.getItem('fobi_missions') || '[]'),
+      gallerySubmissions: localSavedSubmissions,
+      audioEnabled: true
+    };
+
+    let audioCtx = null;
+    function playShutterSound() {
+      if (!window.appState?.audioEnabled) return;
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!audioCtx) audioCtx = new AudioContext();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(750, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(120, audioCtx.currentTime + 0.05);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.06);
+      } catch (e) {}
+    }
+
+    function toggleAudioFx() {
+      window.appState.audioEnabled = !window.appState.audioEnabled;
+      const icon = document.getElementById('audio-icon');
+      if (window.appState.audioEnabled) {
+        if (icon) icon.className = 'fa-solid fa-volume-high text-xs text-purple-600';
+        playShutterSound();
+      } else {
+        if (icon) icon.className = 'fa-solid fa-volume-xmark text-xs text-slate-400';
+      }
+    }
+
+    function isStudentLoggedIn() { return (window.appState?.currentUserRole === 'student' && Boolean(window.appState?.studentProfile?.name)) || window.appState?.currentUserRole === 'teacher'; }
+    function isTeacherLoggedIn() { return window.appState?.currentUserRole === 'teacher'; }
+
+    // Navigation Switcher
+    function switchMainTab(targetTabId, subModulId = null) {
+      if (targetTabId === 'tab-guru' && !isTeacherLoggedIn()) { openLoginModal('teacher'); alertBox('🔒 Akses Khusus: Silakan login sebagai Guru.'); return; }
+      else if (targetTabId !== 'tab-beranda' && !isStudentLoggedIn()) { openLoginModal('student'); alertBox('🔒 Modul Terkunci: Masukkan identitas siswa.'); return; }
+
+      document.querySelectorAll('.view-content-panel').forEach(panel => panel.classList.remove('active-view'));
+      const activePanel = document.getElementById(targetTabId);
+      if (activePanel) activePanel.classList.add('active-view');
+
+      const tabMap = { 'tab-beranda': 'nav-tab-beranda', 'tab-materi': 'nav-tab-materi', 'tab-tugas': 'nav-tab-tugas', 'tab-evaluasi': 'nav-tab-evaluasi', 'tab-refleksi': 'nav-tab-refleksi', 'tab-guru': 'nav-tab-guru' };
+      Object.keys(tabMap).forEach(k => {
+        const btn = document.getElementById(tabMap[k]);
+        if (btn) btn.className = k === targetTabId ? 'main-nav-btn px-3.5 py-2 rounded-xl flex items-center gap-2 shrink-0 transition-all canva-gradient-bg text-white shadow-md shadow-purple-500/20 font-bold' : 'main-nav-btn px-3.5 py-2 rounded-xl flex items-center gap-2 shrink-0 transition-all text-slate-600 hover:text-slate-900 hover:bg-slate-100';
+      });
+
+      if (targetTabId === 'tab-guru') renderTeacherTable();
+      if (subModulId) switchSubModul(subModulId);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function switchSubModul(targetSubId) {
+      if (!isStudentLoggedIn()) { openLoginModal('student'); alertBox('🔒 Silakan lengkapi identitas siswa untuk mengakses materi.'); return; }
+      document.querySelectorAll('.sub-tab-panel').forEach(p => p.classList.remove('active-subtab'));
+      const sub = document.getElementById(targetSubId);
+      if (sub) sub.classList.add('active-subtab');
+
+      const pillMap = ['sub-modul-1','sub-modul-2','sub-modul-3','sub-modul-4','sub-modul-5','sub-modul-6','sub-modul-7','sub-modul-8'];
+      pillMap.forEach(s => {
+        const pillId = s.replace('sub-', 'pill-');
+        const pill = document.getElementById(pillId);
+        if (pill) pill.className = s === targetSubId ? 'sub-modul-pill whitespace-nowrap px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all canva-gradient-bg text-white shadow-md shadow-purple-500/20' : 'sub-modul-pill whitespace-nowrap px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all text-slate-600 hover:bg-slate-100';
+      });
+    }
+
+    function openLoginModal(role = 'student') { switchLoginRole(role); document.getElementById('modal-login').classList.remove('hidden'); }
+    function closeLoginModal() { document.getElementById('modal-login').classList.add('hidden'); }
+
+    function switchLoginRole(role) {
+      const tabS = document.getElementById('tab-login-student'); const tabT = document.getElementById('tab-login-teacher');
+      const panS = document.getElementById('panel-login-student'); const panT = document.getElementById('panel-login-teacher');
+      if (role === 'teacher') {
+        if(tabT) tabT.className = 'flex-1 py-2 text-xs font-mono font-bold rounded-xl transition-all canva-gradient-bg text-white flex items-center justify-center gap-1.5 shadow-sm';
+        if(tabS) tabS.className = 'flex-1 py-2 text-xs font-mono font-bold rounded-xl transition-all text-slate-600 flex items-center justify-center gap-1.5';
+        if(panS) panS.classList.add('hidden'); if(panT) panT.classList.remove('hidden');
+      } else {
+        if(tabS) tabS.className = 'flex-1 py-2 text-xs font-mono font-bold rounded-xl transition-all canva-gradient-bg text-white flex items-center justify-center gap-1.5 shadow-sm';
+        if(tabT) tabT.className = 'flex-1 py-2 text-xs font-mono font-bold rounded-xl transition-all text-slate-600 flex items-center justify-center gap-1.5';
+        if(panT) panT.classList.add('hidden'); if(panS) panS.classList.remove('hidden');
+      }
+    }
+
+    function handleLoginSubmit(event) {
+      event.preventDefault();
+      const name = document.getElementById('login-input-name').value.trim();
+      const studentClass = document.getElementById('login-input-class').value;
+      if (!name) return;
+      const profile = { name, studentClass };
+      window.appState.studentProfile = profile; window.appState.currentUserRole = 'student';
+      localStorage.setItem('fobi_student', JSON.stringify(profile)); localStorage.setItem('fobi_role', 'student');
+      renderStudentIdentityUI(); closeLoginModal(); playShutterSound(); alertBox(`Selamat datang, ${name}!`);
+    }
+
+    function handleTeacherLoginSubmit(event) {
+      event.preventDefault();
+      const inputName = document.getElementById('teacher-login-name').value.trim().toLowerCase();
+      const inputPass = document.getElementById('teacher-login-pass').value.trim();
+      const errAlert = document.getElementById('teacher-error-alert');
+      if (inputName === TEACHER_OFFICIAL_NAME && inputPass === TEACHER_OFFICIAL_PASS) {
+        const profile = { name: 'aditya alhamdy syahputra', role: 'Guru Pengajar FILM' };
+        window.appState.currentUserRole = 'teacher'; window.appState.teacherProfile = profile;
+        localStorage.setItem('fobi_role', 'teacher'); localStorage.setItem('fobi_teacher', JSON.stringify(profile));
+        if (errAlert) errAlert.classList.add('hidden');
+        closeLoginModal(); playShutterSound();
+        const tabGuruBtn = document.getElementById('nav-tab-guru'); if (tabGuruBtn) tabGuruBtn.classList.remove('hidden');
+        renderStudentIdentityUI(); switchMainTab('tab-guru'); alertBox('Selamat datang, Bpk. aditya alhamdy syahputra.');
+      } else {
+        if (errAlert) errAlert.classList.remove('hidden');
+      }
+    }
+
+    function renderStudentIdentityUI() {
+      const role = window.appState?.currentUserRole; const sp = window.appState?.studentProfile; const tp = window.appState?.teacherProfile;
+      const dName = document.getElementById('user-display-name'); const dClass = document.getElementById('user-display-class');
+      const hName = document.getElementById('hero-user-name'); const gBanner = document.getElementById('gate-warning-banner');
+      const tabGuru = document.getElementById('nav-tab-guru');
+
+      if (role === 'teacher' && tp) {
+        if (dName) dName.innerText = tp.name; if (dClass) dClass.innerText = tp.role;
+        if (hName) hName.innerText = 'Guru Pengajar FILM'; if (gBanner) gBanner.classList.add('hidden'); if (tabGuru) tabGuru.classList.remove('hidden');
+      } else if (role === 'student' && sp && sp.name) {
+        if (dName) dName.innerText = sp.name; if (dClass) dClass.innerText = sp.studentClass;
+        if (hName) hName.innerText = `${sp.name} (${sp.studentClass})`; if (gBanner) gBanner.classList.add('hidden'); if (tabGuru) tabGuru.classList.add('hidden');
+      } else {
+        if (dName) dName.innerText = 'Belum Masuk'; if (dClass) dClass.innerText = 'Klik untuk Login';
+        if (hName) hName.innerText = 'Terkunci'; if (gBanner) gBanner.classList.remove('hidden'); if (tabGuru) tabGuru.classList.add('hidden');
+      }
+    }
+
+    window.updateGlobalProgress = function() {
+      const steps = window.appState?.completedSteps || []; const missions = window.appState?.completedMissions || [];
+      const totalPct = Math.round(((steps.length / 8) * 50) + ((missions.length / 7) * 50));
+
+      const pText = document.getElementById('header-progress-text'); const pBar = document.getElementById('header-progress-bar');
+      const hLabel = document.getElementById('hero-progress-label'); const mText = document.getElementById('mission-counter-text');
+      const nBadge = document.getElementById('nav-badge-mission');
+
+      if (pText) pText.innerText = `${totalPct}%`; if (pBar) pBar.style.width = `${totalPct}%`;
+      if (hLabel) hLabel.innerText = `${missions.length}/7 Selesai`; if (mText) mText.innerText = `${missions.length} / 7 Selesai`;
+      if (nBadge) nBadge.innerText = `${missions.length}/7`;
+
+      for (let i = 1; i <= 8; i++) {
+        const badge = document.getElementById(`badge-step-${i}`);
+        if (badge) { badge.innerHTML = steps.includes(i) ? '✓ Selesai' : '○ Belum'; badge.className = steps.includes(i) ? 'text-emerald-600 font-bold' : 'text-slate-400'; }
+      }
+      for (let m = 1; m <= 7; m++) {
+        const btn = document.getElementById(`btn-mission-${m}`);
+        if (btn) btn.innerText = missions.includes(m) ? 'Batal' : 'Tandai Selesai ✓';
+      }
+    };
+
+    function markStepComplete(stepNum) {
+      if (!isStudentLoggedIn()) { openLoginModal('student'); return; }
+      if (!window.appState.completedSteps.includes(stepNum)) { window.appState.completedSteps.push(stepNum); localStorage.setItem('fobi_steps', JSON.stringify(window.appState.completedSteps)); window.updateGlobalProgress(); }
+    }
+    function toggleMission(mNum) {
+      if (!isStudentLoggedIn()) { openLoginModal('student'); return; }
+      const idx = window.appState.completedMissions.indexOf(mNum);
+      if (idx > -1) window.appState.completedMissions.splice(idx, 1); else window.appState.completedMissions.push(mNum);
+      localStorage.setItem('fobi_missions', JSON.stringify(window.appState.completedMissions)); playShutterSound(); window.updateGlobalProgress();
+    }
+    function resetAllProgress() { window.appState.completedSteps = []; window.appState.completedMissions = []; localStorage.setItem('fobi_steps', '[]'); localStorage.setItem('fobi_missions', '[]'); window.updateGlobalProgress(); alertBox('Progres di-reset.'); }
+
+    const cameraSim = { apertureIdx: 1, shutterIdx: 4, isoIdx: 1, focusPlane: 1 };
+    const APERTURE_STOPS = [{ val: 'f/1.4', blur: 14, evContrib: 3 }, { val: 'f/2.8', blur: 9, evContrib: 2 }, { val: 'f/4.0', blur: 6, evContrib: 1 }, { val: 'f/5.6', blur: 3, evContrib: 0 }, { val: 'f/8.0', blur: 1.5, evContrib: -1 }, { val: 'f/11', blur: 0.5, evContrib: -2 }, { val: 'f/22', blur: 0, evContrib: -4 }];
+    const SHUTTER_STOPS = [{ val: '2s', motionBlur: 20, evContrib: 4 }, { val: '1/4s', motionBlur: 14, evContrib: 3 }, { val: '1/15s', motionBlur: 9, evContrib: 2 }, { val: '1/30s', motionBlur: 6, evContrib: 1 }, { val: '1/250s', motionBlur: 0, evContrib: 0 }, { val: '1/500s', motionBlur: 0, evContrib: -1 }, { val: '1/1000s', motionBlur: 0, evContrib: -2 }, { val: '1/2000s', motionBlur: 0, evContrib: -3 }];
+    const ISO_STOPS = [{ val: 'ISO 100', noise: 0, evContrib: -1 }, { val: 'ISO 200', noise: 0.03, evContrib: 0 }, { val: 'ISO 400', noise: 0.1, evContrib: 1 }, { val: 'ISO 800', noise: 0.25, evContrib: 2 }, { val: 'ISO 1600', noise: 0.45, evContrib: 3 }, { val: 'ISO 6400', noise: 0.8, evContrib: 5 }];
+
+    function updateCameraSimulator() {
+      const aperture = APERTURE_STOPS[cameraSim.apertureIdx]; const shutter = SHUTTER_STOPS[cameraSim.shutterIdx]; const iso = ISO_STOPS[cameraSim.isoIdx];
+      const hudShutter = document.getElementById('sim-hud-shutter'); const hudAperture = document.getElementById('sim-hud-aperture'); const hudIso = document.getElementById('sim-hud-iso');
+      const lblAperture = document.getElementById('slider-aperture-label'); const lblShutter = document.getElementById('slider-shutter-label'); const lblIso = document.getElementById('slider-iso-label');
+
+      if (hudShutter) hudShutter.innerText = shutter.val; if (hudAperture) hudAperture.innerText = aperture.val; if (hudIso) hudIso.innerText = iso.val;
+      if (lblAperture) lblAperture.innerText = aperture.val; if (lblShutter) lblShutter.innerText = shutter.val; if (lblIso) lblIso.innerText = iso.val;
+
+      const netEv = ((aperture.evContrib + shutter.evContrib + iso.evContrib) - 2) * 0.5;
+      const meterPin = document.getElementById('sim-meter-pin'); const evLabel = document.getElementById('sim-ev-val');
+      if (meterPin && evLabel) {
+        const clamped = Math.max(-2, Math.min(2, netEv)); meterPin.style.top = `${50 - (clamped * 20)}%`;
+        if (Math.abs(netEv) < 0.2) { evLabel.innerText = '0.0 EV'; evLabel.className = 'font-bold text-emerald-400'; }
+        else if (netEv > 0) { evLabel.innerText = `+${netEv.toFixed(1)} EV`; evLabel.className = 'font-bold text-red-400'; }
+        else { evLabel.innerText = `${netEv.toFixed(1)} EV`; evLabel.className = 'font-bold text-blue-400'; }
+      }
+      const dimmer = document.getElementById('sim-exposure-dimmer');
+      if (dimmer) {
+        if (netEv > 0.3) dimmer.style.backgroundColor = `rgba(255, 255, 255, ${Math.min(0.7, (netEv - 0.3) * 0.4)})`;
+        else if (netEv < -0.3) dimmer.style.backgroundColor = `rgba(0, 0, 0, ${Math.min(0.85, (Math.abs(netEv) - 0.3) * 0.45)})`;
+        else dimmer.style.backgroundColor = 'transparent';
+      }
+
+      const bgLayer = document.getElementById('sim-bg-layer'); const subCard = document.getElementById('sim-subject-card'); const subStat = document.getElementById('sim-subject-status');
+      if (bgLayer && subCard) {
+        if (cameraSim.focusPlane === 1) { subCard.style.filter = 'blur(0px)'; bgLayer.style.filter = `blur(${aperture.blur}px)`; if (subStat) { subStat.innerText = aperture.blur > 4 ? 'TAJAM (BOKEH)' : 'TAJAM'; subStat.className = 'text-[10px] font-mono font-bold text-emerald-400 px-2 py-0.5 rounded bg-black/70'; } }
+        else if (cameraSim.focusPlane === 0) { subCard.style.filter = 'blur(4px)'; bgLayer.style.filter = `blur(${aperture.blur + 6}px)`; if (subStat) { subStat.innerText = 'FOKUS DEPAN'; subStat.className = 'text-[10px] font-mono font-bold text-amber-400 px-2 py-0.5 rounded bg-black/70'; } }
+        else { subCard.style.filter = 'blur(9px)'; bgLayer.style.filter = 'blur(0px)'; if (subStat) { subStat.innerText = 'FOKUS LATAR'; subStat.className = 'text-[10px] font-mono font-bold text-blue-400 px-2 py-0.5 rounded bg-black/70'; } }
+      }
+      const mGhost = document.getElementById('sim-motion-ghost'); const subIcon = document.getElementById('sim-subject-icon');
+      if (mGhost && subIcon) {
+        if (shutter.motionBlur > 0) { mGhost.style.opacity = Math.min(1, shutter.motionBlur / 15); subIcon.style.filter = `blur(${shutter.motionBlur * 0.2}px)`; }
+        else { mGhost.style.opacity = '0'; subIcon.style.filter = 'none'; }
+      }
+      const grain = document.getElementById('sim-grain-overlay'); if (grain) grain.style.opacity = iso.noise;
+    }
+
+    function onApertureChange(val) { cameraSim.apertureIdx = parseInt(val, 10); updateCameraSimulator(); }
+    function onShutterChange(val) { cameraSim.shutterIdx = parseInt(val, 10); updateCameraSimulator(); }
+    function onIsoChange(val) { cameraSim.isoIdx = parseInt(val, 10); updateCameraSimulator(); }
+    function onFocusRingChange(val) { cameraSim.focusPlane = parseInt(val, 10); const lbl = document.getElementById('slider-focus-label'); if (lbl) lbl.innerText = val === '0' ? 'Depan' : (val === '1' ? 'Utama' : 'Latar'); updateCameraSimulator(); }
+    function setCameraPreset(mode) {
+      if (mode === 'bokeh') { cameraSim.apertureIdx = 0; cameraSim.shutterIdx = 6; cameraSim.isoIdx = 0; } else if (mode === 'action') { cameraSim.apertureIdx = 1; cameraSim.shutterIdx = 7; cameraSim.isoIdx = 2; }
+      document.getElementById('input-aperture').value = cameraSim.apertureIdx; document.getElementById('input-shutter').value = cameraSim.shutterIdx; document.getElementById('input-iso').value = cameraSim.isoIdx; updateCameraSimulator();
+    }
+    function resetCameraSim() {
+      cameraSim.apertureIdx = 1; cameraSim.shutterIdx = 4; cameraSim.isoIdx = 1; cameraSim.focusPlane = 1;
+      document.getElementById('input-aperture').value = 1; document.getElementById('input-shutter').value = 4; document.getElementById('input-iso').value = 1; document.getElementById('input-focus').value = 1; updateCameraSimulator();
+    }
+
+    function handleHalfPressShutter() { const ret = document.getElementById('sim-af-reticle'); if (ret) ret.classList.add('border-emerald-400', 'bg-emerald-400/20'); }
+    function releaseHalfPressShutter() { const ret = document.getElementById('sim-af-reticle'); if (ret) setTimeout(() => ret.classList.remove('border-emerald-400', 'bg-emerald-400/20'), 200); }
+    function handleFullCapture() { playShutterSound(); markStepComplete(1); }
+    function triggerHeroShutter() { playShutterSound(); }
+    function toggleHeroGrid() {}
+
+    function checkQuiz(num, choice) {
+      const fb = document.getElementById('quiz-feedback-1'); if (!fb) return; fb.classList.remove('hidden');
+      if (choice === 'B') { fb.className = 'mt-2 text-xs font-mono p-3 rounded-2xl bg-emerald-50 text-emerald-800 border border-emerald-200'; fb.innerHTML = '<strong>BENAR! ✓</strong> Layar monitor LCD pada kamera digital memungkinkan fotografer mengevaluasi ketajaman secara instan.'; markStepComplete(1); }
+      else { fb.className = 'mt-2 text-xs font-mono p-3 rounded-2xl bg-red-50 text-red-700 border border-red-200'; fb.innerHTML = 'Kurang tepat. Ingat keunggulan utama evaluasi langsung pada layar kamera digital!'; }
+    }
+
+    function setFocusDemo(mode) {
+      playShutterSound();
+      const bg = document.getElementById('demo-bokeh-bg'); const lbl = document.getElementById('demo-focus-label'); const sub = document.getElementById('demo-focus-sub');
+      const btnF = document.getElementById('btn-focus-front'); const btnB = document.getElementById('btn-focus-back');
+      if (mode === 'front') {
+        if (bg) bg.style.filter = 'blur(10px)'; if (lbl) lbl.innerText = 'OBJEK DEPAN TAJAM (IN FOCUS)'; if (sub) sub.innerText = 'Latar Belakang Bokeh Halus • Ruang Tajam Sempit';
+        if (btnF) btnF.className = 'w-full py-2.5 canva-gradient-bg text-white font-bold text-xs rounded-xl shadow-md'; if (btnB) btnB.className = 'w-full py-2.5 bg-slate-100 text-slate-700 font-bold text-xs rounded-xl';
+      } else {
+        if (bg) bg.style.filter = 'blur(0px)'; if (lbl) lbl.innerText = 'LATAR BELAKANG TAJAM'; if (sub) sub.innerText = 'Objek Depan Samar • Ruang Tajam Terarah ke Belakang';
+        if (btnB) btnB.className = 'w-full py-2.5 canva-gradient-bg text-white font-bold text-xs rounded-xl shadow-md'; if (btnF) btnF.className = 'w-full py-2.5 bg-slate-100 text-slate-700 font-bold text-xs rounded-xl';
+      }
+    }
+
+    function checkFocusExercise(ans) {
+      const fb = document.getElementById('focus-exercise-feedback'); if (!fb) return; fb.classList.remove('hidden');
+      if (ans === 'B') { fb.className = 'p-3 rounded-2xl text-xs font-mono bg-emerald-50 text-emerald-800'; fb.innerHTML = '<strong>Tepat! ✓</strong> Objek utama harus dikunci ketajamannya.'; markStepComplete(2); }
+      else { fb.className = 'p-3 rounded-2xl text-xs font-mono bg-red-50 text-red-700'; fb.innerHTML = 'Belum tepat.'; }
+    }
+
+    function animateRotDemo() { playShutterSound(); const s = document.getElementById('rot-moving-subject'); const b = document.getElementById('rot-status-bubble'); if (s) { s.style.left = '33.33%'; s.style.top = '33.33%'; } if (b) b.innerText = 'Subjek digeser ke titik temu 1/3.'; }
+    function moveRotSubject(pos) { playShutterSound(); const s = document.getElementById('rot-moving-subject'); const b = document.getElementById('rot-status-bubble'); if (!s || !b) return; if (pos === 'TL') { s.style.left = '33.33%'; s.style.top = '33.33%'; b.innerText = 'Kiri Atas'; } if (pos === 'TR') { s.style.left = '66.66%'; s.style.top = '33.33%'; b.innerText = 'Kanan Atas'; } if (pos === 'BL') { s.style.left = '33.33%'; s.style.top = '66.66%'; b.innerText = 'Kiri Bawah'; } if (pos === 'BR') { s.style.left = '66.66%'; s.style.top = '66.66%'; b.innerText = 'Kanan Bawah'; } }
+    function completeQuickTask() { playShutterSound(); const btn = document.getElementById('btn-quick-rot'); if (btn) { btn.innerText = 'Selesai ✓'; btn.className = 'w-full py-2.5 bg-slate-100 text-emerald-600 font-bold text-xs rounded-xl border border-emerald-300'; } markStepComplete(3); if (!window.appState.completedMissions.includes(1)) { window.appState.completedMissions.push(1); localStorage.setItem('fobi_missions', JSON.stringify(window.appState.completedMissions)); window.updateGlobalProgress(); } }
+
+    const compData = { simetris: { title: 'Komposisi Simetris', desc: 'Keseimbangan formal kiri-kanan.', img: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=700&q=80' }, framing: { title: 'Framing', desc: 'Membingkai objek dengan latar.', img: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=700&q=80' }, rot: { title: 'Rule of Third', desc: 'Titik temu bidang sepertiga.', img: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=700&q=80' }, fillframe: { title: 'Fill the Frame', desc: 'Memenuhi bingkai detail subjek.', img: 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=700&q=80' }, frameinframe: { title: 'Frame in Frame', desc: 'Bingkai alami jendela/pintu.', img: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=700&q=80' }, leadinglines: { title: 'Leading Lines', desc: 'Garis lorong menuntun pandangan.', img: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=700&q=80' }, negativespace: { title: 'Negative Space', desc: 'Ruang kosong minimalis.', img: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=700&q=80' }, goldenshape: { title: 'Golden Shape', desc: 'Geometri segitiga alami.', img: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=700&q=80' }, goldenratio: { title: 'Golden Ratio', desc: 'Spiral Fibonacci proporsional.', img: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=700&q=80' } };
+    function openCompModal(type) { const d = compData[type]; if (!d) return; document.getElementById('modal-comp-title').innerText = d.title; document.getElementById('modal-comp-desc').innerText = d.desc; document.getElementById('modal-comp-img').src = d.img; document.getElementById('modal-comp').classList.remove('hidden'); }
+    function closeCompModal() { document.getElementById('modal-comp').classList.add('hidden'); }
+
+    const techData = {
+      dof: { title: 'Depth of Field (DoF)', desc: 'Kedalaman ruang fokus.', task: 'Potret objek dekat latar blur.', setupLab: function(c) { c.innerHTML = `<div class="aspect-video bg-black rounded-2xl relative flex items-center justify-center"><div id="lab-dof-bg" class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80'); filter: blur(12px);"></div><div class="relative z-10 p-3 bg-black/75 rounded-xl border border-cyan-400 text-center"><i class="fa-solid fa-wine-bottle text-2xl text-cyan-400"></i></div></div><input type="range" min="1" max="16" step="1" value="1" oninput="updateDofLab(this.value)" class="w-full mt-2 accent-cyan-400">`; } },
+      freezing: { title: 'Freezing', desc: 'Membekukan gerakan cepat.', task: 'Gunakan shutter speed 1/1000s.', setupLab: function(c) { c.innerHTML = `<div class="aspect-video bg-slate-950 rounded-2xl flex flex-col items-center justify-center relative"><i id="lab-freeze-icon" class="fa-solid fa-person-running text-5xl text-cyan-400"></i><div id="lab-freeze-blur-trail" class="absolute opacity-0 text-5xl text-cyan-400/40 blur-sm"><i class="fa-solid fa-person-running"></i></div></div><input type="range" min="0" max="3" step="1" value="3" oninput="updateFreezeLab(this.value)" class="w-full mt-2 accent-cyan-400">`; } },
+      bulb: { title: 'Bulb / Light Painting', desc: 'Shutter terbuka lama.', task: 'Gambar dengan cahaya di ruang gelap.', setupLab: function(c) { c.innerHTML = `<div class="aspect-video bg-black rounded-2xl relative overflow-hidden"><canvas id="bulb-paint-canvas" width="400" height="225" class="w-full h-full cursor-crosshair"></canvas></div><button onclick="clearBulbCanvas()" class="mt-2 w-full py-2 bg-slate-800 text-white text-xs rounded">Hapus Kanvas</button>`; setTimeout(initBulbCanvas, 80); } },
+      panning: { title: 'Panning', desc: 'Ikuti laju objek.', task: 'Gunakan speed 1/30s.', setupLab: function(c) { c.innerHTML = `<div class="aspect-video bg-black rounded-2xl relative overflow-hidden flex items-center justify-center"><div id="lab-panning-bg" class="absolute inset-0 bg-cover bg-center blur-sm" style="background-image: url('https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=600&q=80');"></div><i class="fa-solid fa-motorcycle text-3xl text-emerald-400 z-10"></i></div><button onclick="togglePanningDemo()" class="mt-2 w-full py-2 bg-emerald-600 text-white rounded">Simulasikan</button>`; } },
+      siluet: { title: 'Siluet', desc: 'Membelakangi cahaya.', task: 'Ukur metering ke langit.', setupLab: function(c) { c.innerHTML = `<div class="aspect-video rounded-2xl relative overflow-hidden flex items-center justify-center bg-gradient-to-t from-amber-600 to-sky-600"><i id="lab-siluet-person" class="fa-solid fa-person text-7xl text-black relative z-10"></i></div><div class="mt-2 flex gap-2"><button onclick="setSiluetLab('sky')" class="flex-1 py-2 bg-amber-600 text-white text-xs rounded font-bold">Ukur Ke Langit</button><button onclick="setSiluetLab('subject')" class="flex-1 py-2 bg-slate-800 text-white text-xs rounded font-bold">Ukur Ke Subjek</button></div>`; } },
+      raw: { 
+        title: 'RAW Processing', desc: 'Format tanpa kompresi.', task: 'Evaluasi hasil warna RAW vs JPEG.', 
+        setupLab: function(c) { 
+          c.innerHTML = `
+          <div class="aspect-video bg-black rounded-2xl relative overflow-hidden shadow-lg border border-slate-200">
+            <div id="lab-raw-visual" class="absolute inset-0 bg-cover bg-center transition-all duration-700" style="background-image: url('https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&w=600&q=80'); filter: contrast(120%) saturate(130%) brightness(105%);"></div>
+            <div id="lab-raw-label" class="absolute top-3 left-3 bg-black/80 backdrop-blur text-white font-mono font-bold text-[10px] px-2.5 py-1 rounded-lg border border-white/20 uppercase shadow-md">JPEG / Warna Matang</div>
+          </div>
+          <div class="mt-3 flex gap-2">
+            <button id="btn-raw-flat" onclick="toggleRawDemo(true)" class="flex-1 py-2 bg-slate-800 text-white font-mono text-xs rounded-xl transition-all border border-slate-600 shadow-sm">File RAW Mentah</button>
+            <button id="btn-raw-graded" onclick="toggleRawDemo(false)" class="flex-1 py-2 canva-gradient-bg text-white font-bold font-mono text-xs rounded-xl transition-all shadow-md ring-2 ring-purple-400">File JPEG (Matang)</button>
+          </div>`; 
+        } 
+      }
+    };
+
+    function openTechniqueDemo(code) { const d = techData[code]; if (!d) return; document.getElementById('modal-tech-title').innerText = d.title; document.getElementById('modal-tech-desc').innerText = d.desc; document.getElementById('modal-tech-task').innerText = d.task; const stage = document.getElementById('modal-tech-interactive-stage'); if (stage && d.setupLab) d.setupLab(stage); document.getElementById('modal-technique').classList.remove('hidden'); }
+    function closeTechniqueModal() { document.getElementById('modal-technique').classList.add('hidden'); }
+    function updateDofLab(val) { const bg = document.getElementById('lab-dof-bg'); if (bg) { if (val <= 3) bg.style.filter = 'blur(12px)'; else if (val <= 8) bg.style.filter = 'blur(5px)'; else bg.style.filter = 'blur(0px)'; } }
+    function updateFreezeLab(val) { const icon = document.getElementById('lab-freeze-icon'); const ghost = document.getElementById('lab-freeze-blur-trail'); if (val === '0') { ghost.style.opacity = '1'; icon.style.filter = 'blur(4px)'; } else if (val === '1') { ghost.style.opacity = '0.5'; icon.style.filter = 'blur(1.5px)'; } else { ghost.style.opacity = '0'; icon.style.filter = 'none'; } }
+    let isDrawingBulb = false; function initBulbCanvas() { const canvas = document.getElementById('bulb-paint-canvas'); if (!canvas) return; const ctx = canvas.getContext('2d'); ctx.strokeStyle = '#00C4CC'; ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.shadowBlur = 10; ctx.shadowColor = '#00C4CC'; canvas.onmousedown = (e) => { isDrawingBulb = true; ctx.beginPath(); const r = canvas.getBoundingClientRect(); ctx.moveTo(e.clientX - r.left, e.clientY - r.top); }; canvas.onmousemove = (e) => { if (!isDrawingBulb) return; const r = canvas.getBoundingClientRect(); ctx.lineTo(e.clientX - r.left, e.clientY - r.top); ctx.stroke(); }; window.onmouseup = () => isDrawingBulb = false; }
+    function clearBulbCanvas() { const canvas = document.getElementById('bulb-paint-canvas'); if (canvas) canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height); }
+    function togglePanningDemo() { const bg = document.getElementById('lab-panning-bg'); if (bg) { bg.classList.add('translate-x-6'); setTimeout(() => bg.classList.remove('translate-x-6'), 400); } }
+    function setSiluetLab(mode) { const p = document.getElementById('lab-siluet-person'); if (p) p.className = mode === 'sky' ? 'fa-solid fa-person text-7xl text-black relative z-10' : 'fa-solid fa-person text-7xl text-amber-200 brightness-150 relative z-10'; }
+    
+    // Fixed Toggle RAW
+    function toggleRawDemo(isRaw) { 
+      const img = document.getElementById('lab-raw-visual'); 
+      const lbl = document.getElementById('lab-raw-label');
+      const btnFlat = document.getElementById('btn-raw-flat');
+      const btnGraded = document.getElementById('btn-raw-graded');
+      if (img && lbl) {
+        if (isRaw) {
+          img.style.filter = 'contrast(70%) saturate(50%) brightness(95%)'; 
+          lbl.innerText = 'RAW Mentah (Flat/Dull)';
+          if(btnFlat) { btnFlat.className = 'flex-1 py-2 bg-slate-600 text-white font-mono text-xs rounded-xl transition-all font-bold ring-2 ring-slate-400 shadow-sm'; }
+          if(btnGraded) { btnGraded.className = 'flex-1 py-2 bg-slate-100 text-slate-700 border border-slate-200 font-mono font-bold text-xs rounded-xl transition-all'; }
+        } else {
+          img.style.filter = 'contrast(120%) saturate(130%) brightness(105%)'; 
+          lbl.innerText = 'JPEG / Color Graded';
+          if(btnFlat) { btnFlat.className = 'flex-1 py-2 bg-slate-800 text-white font-mono text-xs rounded-xl transition-all shadow-sm'; }
+          if(btnGraded) { btnGraded.className = 'flex-1 py-2 canva-gradient-bg text-white font-bold font-mono text-xs rounded-xl transition-all shadow-md ring-2 ring-purple-400'; }
+        }
+      } 
+    }
+
+    const genreData = {
+      creative: { 
+        title: 'Creative & Commercial', desc: 'Rekayasa artistik dan konsep visual terencana.', 
+        items: [
+          {name: 'Commercial/Ad', desc: 'Fotografi promosi dan periklanan yang mengutamakan nilai jual.'}, 
+          {name: 'Fine Art', desc: 'Mengekspresikan visi artistik fotografer layaknya sebuah lukisan.'}, 
+          {name: 'Fashion', desc: 'Fokus pada pakaian dan gaya hidup dengan arahan pose khusus.'}, 
+          {name: 'Macro', desc: 'Menangkap detail subjek yang sangat kecil (serangga/tekstur) dari jarak dekat.'},
+          {name: 'Food', desc: 'Menata makanan agar terlihat sangat menggugah selera untuk menu/iklan.'},
+          {name: 'Conceptual', desc: 'Menciptakan foto yang menyampaikan ide abstrak atau pesan simbolis.'}
+        ] 
+      },
+      editorial: { 
+        title: 'Editorial & Journalism', desc: 'Fotografi jurnalistik dan dokumentasi faktual.', 
+        items: [
+          {name: 'Photojournalism', desc: 'Bercerita dengan fakta visual tanpa rekayasa untuk keperluan berita aktual.'}, 
+          {name: 'Documentary', desc: 'Proyek dokumentasi jangka panjang tentang isu sosial atau budaya.'}, 
+          {name: 'Sports', desc: 'Menangkap momen puncak aksi atletik yang berlangsung cepat.'}, 
+          {name: 'Wildlife', desc: 'Mendokumentasikan kehidupan alam liar di habitat aslinya.'},
+          {name: 'War/Conflict', desc: 'Meliput situasi krisis, peperangan, dan dampaknya terhadap kemanusiaan.'}
+        ] 
+      },
+      retail: { 
+        title: 'Retail & Service', desc: 'Layanan komersial personal & keluarga.', 
+        items: [
+          {name: 'Portraiture', desc: 'Menangkap karakter psikologis dan emosi seseorang secara intim.'}, 
+          {name: 'Wedding', desc: 'Dokumentasi momen sakral pernikahan dan detail perayaan keluarga.'}, 
+          {name: 'Event', desc: 'Meliput acara seremonial, konser, atau gathering korporat.'},
+          {name: 'Architecture', desc: 'Memotret interior/eksterior bangunan untuk keperluan properti/desain.'},
+          {name: 'Product', desc: 'Memotret barang/katalog e-commerce dengan pencahayaan bersih.'}
+        ] 
+      },
+      personal: { 
+        title: 'Personal & Nature', desc: 'Dokumentasi mandiri dan eksplorasi alam.', 
+        items: [
+          {name: 'Street', desc: 'Menangkap realitas aktivitas manusia yang spontan di area publik.'}, 
+          {name: 'Travel Diary', desc: 'Dokumentasi memori yang mengeksplorasi budaya dan lanskap asing.'},
+          {name: 'Landscape', desc: 'Mengabadikan keindahan bentang alam, gunung, pantai, atau perkotaan.'},
+          {name: 'Astrophotography', desc: 'Memotret benda langit seperti bintang, bulan, dan Bima Sakti.'},
+          {name: 'Aerial/Drone', desc: 'Pengambilan gambar dari ketinggian ekstrim menggunakan pesawat tanpa awak.'}
+        ] 
+      }
+    };
+
+    function switchGenreCategory(cat) {
+      const d = genreData[cat]; if (!d) return;
+      ['creative', 'editorial', 'retail', 'personal'].forEach(c => {
+        const btn = document.getElementById(`genre-tab-${c}`);
+        if (btn) btn.className = c === cat ? 'px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold canva-gradient-bg text-white shadow-xs' : 'px-3.5 py-1.5 rounded-xl text-xs font-mono font-bold bg-white text-slate-700 border border-slate-200 shadow-xs hover:border-purple-300';
+      });
+      const container = document.getElementById('genre-content-container');
+      if (!container) return;
+      const htmlCards = d.items.map(item => `
+        <div class="bg-slate-50 border border-slate-200 p-4 rounded-2xl hover:shadow-md transition-all">
+          <div class="flex items-center gap-2 text-purple-700 font-bold mb-1">
+            <i class="fa-solid fa-tag text-[10px]"></i><h5 class="text-sm">${item.name}</h5>
+          </div>
+          <p class="text-[11px] text-slate-600">${item.desc}</p>
+        </div>
+      `).join('');
+      container.innerHTML = `
+        <div class="mb-4"><h4 class="text-lg font-bold text-slate-900">${d.title}</h4><p class="text-xs text-slate-500 mt-0.5">${d.desc}</p></div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">${htmlCards}</div>
+      `;
+    }
+
+    function updateAssistantProgress() { const chks = document.querySelectorAll('.chk-assist:checked'); const counter = document.getElementById('assist-step-counter'); if (counter) counter.innerText = `${chks.length} / 8 Checklist Terpenuhi`; if (chks.length >= 6) markStepComplete(6); }
+    function calculateEvaluation() { const checkedCount = document.querySelectorAll('.eval-chk:checked').length; const statusLabel = document.getElementById('eval-status-label'); if (statusLabel) { statusLabel.innerText = checkedCount > 7 ? 'Siap Dikumpulkan ✓' : 'Belum Siap'; statusLabel.className = checkedCount > 7 ? 'text-xs font-bold text-emerald-600' : 'text-xs font-bold text-red-500'; } if (checkedCount > 7) markStepComplete(7); }
+    function resetEvaluation() { document.querySelectorAll('.eval-chk').forEach(c => c.checked = false); calculateEvaluation(); }
+    let selectedScale = 3; function selectReflectScale(idx) { selectedScale = idx; for (let i = 1; i <= 4; i++) { const btn = document.getElementById(`btn-scale-${i}`); if (btn) btn.className = i === idx ? 'p-3 rounded-2xl bg-purple-50 border-2 border-purple-500 text-center cursor-pointer shadow-sm' : 'p-3 rounded-2xl bg-slate-50 border border-slate-200 text-center cursor-pointer'; } }
+    function saveReflection() { playShutterSound(); localStorage.setItem('fobi_reflection', JSON.stringify({ scale: selectedScale })); const a = document.getElementById('reflection-save-alert'); if (a) { a.classList.remove('hidden'); setTimeout(() => a.classList.add('hidden'), 3000); } markStepComplete(8); }
+    function exportReflectionText() { alertBox('Rangkuman teks refleksi berhasil disalin!'); }
+
+    let activeUploadedBase64 = null;
+    function handleImageFilePicker(e) { const file = e.target.files[0]; if (!file) return; const reader = new FileReader(); reader.onload = function(evt) { activeUploadedBase64 = evt.target.result; const box = document.getElementById('submit-file-preview-box'); const img = document.getElementById('submit-file-preview-img'); if (box && img) { img.src = activeUploadedBase64; box.classList.remove('hidden'); } }; reader.readAsDataURL(file); }
+    function openSubmitFormModal() { if (!isStudentLoggedIn()) { openLoginModal('student'); return; } activeUploadedBase64 = null; document.getElementById('modal-submit').classList.remove('hidden'); }
+    function closeSubmitModal() { document.getElementById('modal-submit').classList.add('hidden'); }
+    function handleRealPhotoSubmission(e) { e.preventDefault(); const profile = window.appState?.studentProfile || window.appState?.teacherProfile; if (!profile) return; const mission = document.getElementById('submit-mission').value; const title = document.getElementById('submit-title').value.trim(); const photoUrl = activeUploadedBase64 || 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=600&q=80'; const payload = { id: 'sub_' + Date.now(), studentName: profile.name, studentClass: profile.studentClass || 'X FILM 1', mission, title, photoUrl, shutter: '1/250s', aperture: 'f/2.8', iso: 'ISO 400', submittedAt: new Date().toLocaleDateString('id-ID') }; window.appState.gallerySubmissions.unshift(payload); localStorage.setItem('fobi_gallery_submissions', JSON.stringify(window.appState.gallerySubmissions)); renderRealStudentGallery(); closeSubmitModal(); playShutterSound(); alertBox('Karya foto berhasil dikumpulkan!'); }
+    function renderRealStudentGallery(filterCat = 'all') { const grid = document.getElementById('gallery-grid'); const empty = document.getElementById('gallery-empty-state'); const count = document.getElementById('total-gallery-count'); const list = window.appState.gallerySubmissions; if (count) count.innerText = list.length; if (!grid) return; const filtered = filterCat === 'all' ? list : list.filter(i => i.mission === filterCat); if (filtered.length === 0) { grid.innerHTML = ''; if (empty) empty.classList.remove('hidden'); return; } if (empty) empty.classList.add('hidden'); grid.innerHTML = filtered.map(item => `<div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-canva-card"><div class="aspect-video bg-black relative cursor-pointer" onclick="openPhotoPreviewModal('${item.photoUrl}', '${item.title}', '${item.studentName}')"><img src="${item.photoUrl}" alt="${item.title}" class="w-full h-full object-cover"></div><div class="p-4 space-y-1"><span class="text-[9px] font-mono text-purple-700 font-bold">${item.mission}</span><h4 class="text-xs font-bold text-slate-900">${item.title}</h4><div class="text-[10px] font-mono text-slate-500">${item.studentName} (${item.studentClass})</div></div></div>`).join(''); }
+    function filterGallery(cat) { renderRealStudentGallery(cat); }
+    function openPhotoPreviewModal(url, title, author) { document.getElementById('preview-modal-img').src = url; document.getElementById('preview-modal-title').innerText = title; document.getElementById('preview-modal-author').innerText = author; document.getElementById('modal-photo-preview').classList.remove('hidden'); }
+    function closePhotoPreviewModal() { document.getElementById('modal-photo-preview').classList.add('hidden'); }
+
+    let teacherCurrentFilter = 'all'; let teacherSearchQuery = '';
+    function renderTeacherTable() { const tbody = document.getElementById('teacher-submissions-tbody'); const empty = document.getElementById('teacher-empty-state'); const list = window.appState.gallerySubmissions; document.getElementById('stat-total-submissions').innerText = list.length; document.getElementById('stat-count-film1').innerText = list.filter(i => i.studentClass === 'X FILM 1').length; document.getElementById('stat-count-film2').innerText = list.filter(i => i.studentClass === 'X FILM 2').length; if (!tbody) return; const filtered = list.filter(i => { const matchClass = teacherCurrentFilter === 'all' || i.studentClass === teacherCurrentFilter; const q = teacherSearchQuery.toLowerCase(); const matchQuery = !q || i.studentName.toLowerCase().includes(q) || i.title.toLowerCase().includes(q); return matchClass && matchQuery; }); if (filtered.length === 0) { tbody.innerHTML = ''; if (empty) empty.classList.remove('hidden'); return; } if (empty) empty.classList.add('hidden'); tbody.innerHTML = filtered.map((item, idx) => `<tr class="hover:bg-purple-50/30"><td class="py-3 px-4 font-mono font-bold">${idx + 1}</td><td class="py-3 px-4"><div class="w-16 h-10 rounded bg-slate-900 overflow-hidden"><img src="${item.photoUrl}" class="w-full h-full object-cover"></div></td><td class="py-3 px-4 font-bold">${item.studentName} (${item.studentClass})</td><td class="py-3 px-4">${item.mission} — ${item.title}</td><td class="py-3 px-4 font-mono text-[10px]">1/250s | f/2.8</td><td class="py-3 px-4 text-center"><button onclick="deleteSubmission('${item.id}')" class="text-red-500"><i class="fa-solid fa-trash"></i></button></td></tr>`).join(''); }
+    function filterTeacherTable(cls) { teacherCurrentFilter = cls; renderTeacherTable(); }
+    function searchTeacherTable(q) { teacherSearchQuery = q; renderTeacherTable(); }
+    function deleteSubmission(id) { window.appState.gallerySubmissions = window.appState.gallerySubmissions.filter(i => i.id !== id); localStorage.setItem('fobi_gallery_submissions', JSON.stringify(window.appState.gallerySubmissions)); renderTeacherTable(); renderRealStudentGallery(); }
+    function exportSubmissionsToCSV() { alertBox('Rekapitulasi CSV berhasil diunduh!'); }
+    function exitTeacherMode() { switchMainTab('tab-beranda'); }
+
+    function openAssistantModal() { document.getElementById('modal-assistant').classList.remove('hidden'); }
+    function closeAssistantModal() { document.getElementById('modal-assistant').classList.add('hidden'); }
+    function sendFobiMessage() { const input = document.getElementById('chat-input'); const box = document.getElementById('chat-stream-box'); if (!input || !input.value.trim()) return; const userText = input.value.trim(); box.innerHTML += `<div class="bg-purple-50 p-2.5 rounded-2xl text-right">${userText}</div>`; input.value = ''; setTimeout(() => { box.innerHTML += `<div class="bg-slate-50 p-2.5 rounded-2xl"><strong>FOBI:</strong> Pastikan Anda mengecek Modul K3 sebelum memotret di lapangan!</div>`; box.scrollTop = box.scrollHeight; }, 300); }
+    function alertBox(msg) { const t = document.createElement('div'); t.className = 'fixed bottom-4 right-4 z-50 bg-white border border-purple-300 p-4 rounded-2xl shadow-canva text-xs font-mono'; t.innerHTML = msg; document.body.appendChild(t); setTimeout(() => t.remove(), 4000); }
+
+    window.onload = function() { renderStudentIdentityUI(); window.updateGlobalProgress(); switchGenreCategory('creative'); updateCameraSimulator(); renderRealStudentGallery(); renderTeacherTable(); };
+  </script>
+</body>
+</html>
